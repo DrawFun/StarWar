@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StarWar", "StarWar\StarWar.vcxproj", "{9B6F6474-9451-48C0-B8F6-E346EE86D997}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9B6F6474-9451-48C0-B8F6-E346EE86D997}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9B6F6474-9451-48C0-B8F6-E346EE86D997}.Debug|Win32.Build.0 = Debug|Win32
+		{9B6F6474-9451-48C0-B8F6-E346EE86D997}.Release|Win32.ActiveCfg = Release|Win32
+		{9B6F6474-9451-48C0-B8F6-E346EE86D997}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
