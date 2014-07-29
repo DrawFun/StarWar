@@ -7,6 +7,17 @@ extern D3DXVECTOR3	g_vLook;  // Look Vector
 extern D3DXVECTOR3	g_vUp;      // Up Vector
 extern D3DXVECTOR3	g_vRight;   // Right Vector
 
+//Snowman related variables
+D3DXVECTOR3	snowmanPos(10.0f, -30.0f, 10.0f); //Position
+LPDIRECT3DTEXTURE9 pSnowmanTexture0 = NULL; //First texture
+LPDIRECT3DTEXTURE9 pSnowmanTexture1 = NULL; //Second texture
+LPDIRECT3DVERTEXBUFFER9 pSnowmanVertexBuffer = NULL; //D3D vertext buffer 
+LPD3DXMESH pSnowmanMesh = NULL; //Point to snowman mesh
+D3DMATERIAL9 *pSnowmanMeshMaterials = NULL; //Point to snowman mesh material
+unsigned long snowManNumMaterials = 0L; //Number of material
+D3DXMATRIX snowmanRX, snowmanRY, snowmanRZ;
+float ry, rz;
+
 CPlayer::CPlayer(HWND hWnd)
 {
 	m_hWnd = hWnd;
@@ -24,9 +35,48 @@ void CPlayer::Move()
 
 }
 
-void CPlayer::Update()
+void CPlayer::Update(LPDIRECT3DDEVICE9 pd3dDevice)
 {
+	//Draw snowman
+	D3DXMATRIX snowmanMove, snowmanScale, snowmanRX, snowmanRY, snowmanRZ, snowmanWorldMat;	
+	//Zoom in the snowman scale
+	D3DXMatrixScaling( &snowmanScale, 0.05f, 0.05f, 0.05f );
+	//Tranlate to the default position
+	D3DXMatrixTranslation( &snowmanMove, m_position.x, m_position.y, m_position.z);
 
+	//D3DXMatrixRotationY(&snowmanRY, ry);  
+	
+
+	//Calculate the transformer matrix
+	//snowmanWorldMat = snowmanScale * snowmanMove;
+	snowmanWorldMat = snowmanScale *snowmanRY;
+	
+	//Transform the world according the generated matrix
+	pd3dDevice->SetTransform(D3DTS_WORLD, &snowmanWorldMat);
+
+	//Set texture on stage 0
+	pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	//Set RGB mix method
+	pd3dDevice->SetTextureStageState(0, D3DTSS_TEXCOORDINDEX, 0);
+	pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP,   D3DTOP_MODULATE);
+	
+	//Set texture on stage 1
+	pd3dDevice->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	pd3dDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	//Set RGB mix method
+	pd3dDevice->SetTextureStageState(1, D3DTSS_TEXCOORDINDEX, 1);
+	pd3dDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
+
+    for( unsigned long i = 0; i < snowManNumMaterials; ++i )
+    {
+        pd3dDevice->SetMaterial(&pSnowmanMeshMaterials[i]);
+		
+		//Set multiple textures
+		pd3dDevice->SetTexture(0, pSnowmanTexture0);
+		pd3dDevice->SetTexture(1, pSnowmanTexture1);
+        pSnowmanMesh->DrawSubset(i);
+    }
 }
 
 void CPlayer::Controller(bool isLButtonDown, float elpasedTime)
@@ -56,14 +106,18 @@ void CPlayer::Controller(bool isLButtonDown, float elpasedTime)
 			//First calculate the radian according the distance
 			//Then rotate the radian and get the rotation matrix
 			D3DXMatrixRotationAxis(&matRotation, &vRight, D3DXToRadian((float)nYDiff / 6.0f));
+			
+			ry = D3DXToRadian((float)nYDiff / 6.0f);
 			//Rotate look and up directions according the rotation matrix
 			D3DXVec3TransformCoord(&vLook, &vLook, &matRotation);
-			D3DXVec3TransformCoord(&vUp, &vUp, &matRotation);
+			D3DXVec3TransformCoord(&vUp, &vUp, &matRotation);			
 		}
 
 		if(nXDiff != 0)
 		{
 			D3DXMatrixRotationAxis( &matRotation, &D3DXVECTOR3(0,1,0), D3DXToRadian((float)nXDiff / 6.0f) );
+			snowmanRZ = matRotation;
+		
 			D3DXVec3TransformCoord( &vLook, &vLook, &matRotation );
 			D3DXVec3TransformCoord( &vUp, &vUp, &matRotation );
 		}
@@ -115,33 +169,52 @@ void CPlayer::Controller(bool isLButtonDown, float elpasedTime)
 	g_vUp = vUp;
 }
 
-bool CPlayer::InitVertices()
+bool CPlayer::InitPosition(const D3DXVECTOR3 &position, const D3DXVECTOR3 &scale, const D3DXVECTOR3 &rotation)
+{
+	m_position = position;
+	m_scale = scale;
+	m_rotation = rotation;
+	return true;
+}
+
+bool CPlayer::InitVertices(LPDIRECT3DDEVICE9 pd3dDevice)
 {
 	//Init snowman x model
 	LPD3DXBUFFER pD3DXMtrlBuffer;
 
     D3DXLoadMeshFromX( "Resource//Snowman.x", D3DXMESH_SYSTEMMEM, 
-                       g_pd3dDevice, NULL, 
-                       &pD3DXMtrlBuffer, NULL, &g_snowManNumMaterials, 
-                       &g_pSnowmanMesh );
+                       pd3dDevice, NULL, 
+                       &pD3DXMtrlBuffer, NULL, &snowManNumMaterials, 
+                       &pSnowmanMesh );
 
     D3DXMATERIAL *d3dxMaterials = (D3DXMATERIAL*)pD3DXMtrlBuffer->GetBufferPointer();
-    g_pSnowmanMeshMaterials = new D3DMATERIAL9[g_snowManNumMaterials];
+    pSnowmanMeshMaterials = new D3DMATERIAL9[snowManNumMaterials];
+    for( unsigned long i = 0; i < snowManNumMaterials; ++i )
+    {
+        //Set materials
+        pSnowmanMeshMaterials[i] = d3dxMaterials[i].MatD3D;
+        //Set the ambient color for the material
+        pSnowmanMeshMaterials[i].Ambient = pSnowmanMeshMaterials[i].Diffuse;
+    }
+	//Create textures from files
+	D3DXCreateTextureFromFile( pd3dDevice, "Resource//Snowman1.jpg", &pSnowmanTexture0);
+	D3DXCreateTextureFromFile( pd3dDevice, "Resource//Snowman2.jpg", &pSnowmanTexture1);
+
+    pD3DXMtrlBuffer->Release();
+	return true;
+}
+
+bool CPlayer::InitNormals()
+{
+	return true;
+}
+
+bool CPlayer::InitTextures()
+{
+	return true;
 }
 
 
 
 
-    for( unsigned long i = 0; i < g_snowManNumMaterials; ++i )
-    {
-        //Set materials
-        g_pSnowmanMeshMaterials[i] = d3dxMaterials[i].MatD3D;
-        //Set the ambient color for the material
-        g_pSnowmanMeshMaterials[i].Ambient = g_pSnowmanMeshMaterials[i].Diffuse;
-    }
 
-	//Create textures from files
-	D3DXCreateTextureFromFile( g_pd3dDevice, "Resource//Snowman1.jpg", &g_pSnowmanTexture0);
-	D3DXCreateTextureFromFile( g_pd3dDevice, "Resource//Snowman2.jpg", &g_pSnowmanTexture1);
-
-    pD3DXMtrlBuffer->Release();

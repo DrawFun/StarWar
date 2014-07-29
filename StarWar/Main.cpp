@@ -122,14 +122,21 @@ int WINAPI WinMain(	HINSTANCE hInstance,
     ShowWindow( g_hWnd, nCmdShow );
     UpdateWindow( g_hWnd );
 	
-	//Init D3D related resource here
-	init();
 
+
+	//Init D3D device pointer
+	dxEngine = CDXEngine::Instance(g_hWnd);
+	g_pD3D = dxEngine->GetDx();
+	g_pd3dDevice = dxEngine->GetDxDevice();
 
 	player = new CPlayer(g_hWnd);
-	D3DXVECTOR3 vec = D3DXVECTOR3(0, -10, -10);
-	camera = new CCamera(player, D3DXVECTOR3(0, 10, -10));
+	player->InitPosition(g_vEye);
+	player->InitVertices(g_pd3dDevice);
+	
+	camera = new CCamera(player, D3DXVECTOR3(0, 30, -30));
 
+	//Init D3D related resource here
+	init();
 
 	while( uMsg.message != WM_QUIT )
 	{
@@ -265,10 +272,7 @@ void setupLight(void)
 //------------------------------------------------------------------------------
 void init( void )
 {
-	//Init D3D device pointer
-	dxEngine = CDXEngine::Instance(g_hWnd);
-	g_pD3D = dxEngine->GetDx();
-	g_pd3dDevice = dxEngine->GetDxDevice();
+
 
 	//Init snowman x model
 	LPD3DXBUFFER pD3DXMtrlBuffer;
@@ -431,6 +435,8 @@ void render( void )
 	pCSkyBox->Draw(g_vEye);
 	//Draw terrain
 	pCTerrain->Draw();
+	
+	player->Update(g_pd3dDevice);
 
 	//Draw snowman
 	D3DXMATRIX snowmanMove, snowmanScale, snowmanWorldMat;	

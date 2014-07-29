@@ -1,9 +1,9 @@
 #ifndef _STARWAR_PLAYER_H_
 #define _STARWAR_PLAYER_H_
 
-#include "DrawableNode.h"
+#include "Node.h"
 
-class CPlayer : public CDrawableNode
+class CPlayer : public CNode
 {
 protected:
 	HWND m_hWnd;
@@ -22,8 +22,12 @@ public:
 
 public:
 	CPlayer(HWND hWnd);
-	void Update();
-	bool InitVertices();
+	void Update(LPDIRECT3DDEVICE9 pd3dDevice);
+	bool InitPosition
+	(const D3DXVECTOR3 &position = D3DXVECTOR3(0, 0, 0), 
+	 const D3DXVECTOR3 &scale = D3DXVECTOR3(1, 1, 1),
+	 const D3DXVECTOR3 &rotation = D3DXVECTOR3(0, 0, 0));
+	bool InitVertices(LPDIRECT3DDEVICE9 pd3dDevice);
 	bool InitTextures();
 	bool InitNormals();
 	void Draw();
