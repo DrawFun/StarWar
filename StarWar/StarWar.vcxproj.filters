@@ -83,6 +83,9 @@
     <ClInclude Include="Controller.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resource\alpine_back.jpg">

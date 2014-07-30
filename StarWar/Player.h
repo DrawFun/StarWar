@@ -24,8 +24,7 @@ public:
 	CPlayer(HWND hWnd);
 	void Update();
 	bool InitVertices();
-	bool InitTextures();
-	bool InitNormals();
+	bool InitColliders();
 	void Draw();
 	void Move();
 	void Controller(bool isLButtonDown, float elpasedTime);

@@ -67,7 +67,7 @@ D3DMATERIAL9 *g_pSnowmanMeshMaterials = NULL; //Point to snowman mesh material
 unsigned long g_snowManNumMaterials = 0L; //Number of material
 
 //Vectors for view and position
-D3DXVECTOR3	g_vEye(0.0f, -25.0f, -10.0f);    // Eye Position
+D3DXVECTOR3	g_vEye(0.0f, -25.0f, 0.0f);    // Eye Position
 D3DXVECTOR3	g_vLook(0.0f, 0.0f, 1.0f);  // Look Vector
 D3DXVECTOR3	g_vUp(0.0f, 1.0f, 0.0f);      // Up Vector
 D3DXVECTOR3	g_vRight(1.0f, 0.0f, 0.0f);   // Right Vector
@@ -136,15 +136,16 @@ int WINAPI WinMain(	HINSTANCE hInstance,
 	player = new CPlayer(g_hWnd);
 	player->InitPosition(g_vEye);
 	player->SetScale(D3DXVECTOR3(0.05,0.05,0.05));
-	player->InitVertices();
-
+	player->InitVertices();	
+	player->InitColliders();
+	
 	mine = new CMine(0.01);
 	mine->InitPosition(g_snowmanPos + D3DXVECTOR3(5,0,5));
 	mine->SetScale(D3DXVECTOR3(0.05,0.05,0.05));
-	mine->InitVertices();
-	mine->InitTextures();
+	mine->InitVertices();	
+	mine->InitColliders();
 	
-	camera = new CCamera(player, D3DXVECTOR3(0, 30, -30));
+	camera = new CCamera(player, D3DXVECTOR3(0, -15, -15));
 
 	controller = new CController(player);
 
@@ -395,7 +396,6 @@ void updateViewMatrix( void )
 
 	g_pd3dDevice->SetTransform( D3DTS_VIEW, &view ); 
 
-
 }
 
 //------------------------------------------------------------------------------
@@ -448,8 +448,8 @@ void render( void )
 	GetKeyboardState(input.keys);
 
 	controller->Control(input);
-	camera->LateUpdate();
-	updateViewMatrix();
+	
+	//updateViewMatrix();
 
 	//Draw skybox, terrain and snowman
     g_pd3dDevice->BeginScene();	
@@ -466,7 +466,7 @@ void render( void )
 	player->Update();
 
 	mine->Update();
-
+	camera->LateUpdate();
 	//Draw snowman
 	D3DXMATRIX snowmanMove, snowmanScale, snowmanWorldMat;	
 	//Zoom in the snowman scale

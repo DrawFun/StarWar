@@ -20,9 +20,10 @@ class CCamera
 protected:
 	CGameNode *m_target;
 	D3DXVECTOR3 m_offsetPosition;
+	void UpdateViewMatrix();
 
 public:
-	CCamera(CGameNode *target, const D3DXVECTOR3 &position);
+	CCamera(CGameNode *target, D3DXVECTOR3 &position);
 	void LateUpdate();
 };
 

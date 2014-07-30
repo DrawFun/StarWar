@@ -17,8 +17,7 @@ public:
 	CMine(float rotateSpeed = 0) : m_rotateSpeed(rotateSpeed){};
 	void Update();
 	bool InitVertices();
-	bool InitTextures();
-	bool InitNormals();
+	bool InitColliders();
 };
 
 #endif

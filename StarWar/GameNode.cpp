@@ -12,8 +12,12 @@ D3DXVECTOR3 CGameNode::GetScale()
 
 D3DXVECTOR3 CGameNode::GetRotation()
 {
-	return m_rotation;
-	UpdateMatrix();
+	return m_rotation;	
+}
+
+std::vector<Collider> CGameNode::GetCollider()
+{
+	return colliders;
 }
 
 void CGameNode::SetPosition(D3DXVECTOR3 &position)

@@ -56,24 +56,28 @@ bool CMine::InitVertices()
     }
 
     pD3DXMtrlBuffer->Release();
-	return true;
-}
-	
-bool CMine::InitTextures()
-{
-
-	
 	//TODO: NULL POINT FAIL
-	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
+	//LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
 
 	//Create textures from files
 	D3DXCreateTextureFromFile( pd3dDevice, "Resource//Snowman1.jpg", &pSnowmanTexture0);
 	D3DXCreateTextureFromFile( pd3dDevice, "Resource//Snowman2.jpg", &pSnowmanTexture1);
 		
-	return true;
+	return true;	
 }
 	
-bool CMine::InitNormals()
+bool CMine::InitColliders()
 {
+	D3DXVECTOR3 pMin, pMax;
+	D3DVERTEXELEMENT9 decl[MAX_FVF_DECL_SIZE];
+	pSnowmanMesh->GetDeclaration( decl );
+	LPVOID pVB;
+	pSnowmanMesh->LockVertexBuffer( D3DLOCK_READONLY, &pVB );
+	UINT uStride = D3DXGetDeclVertexSize( decl, 0 );
+	D3DXComputeBoundingBox(( const D3DXVECTOR3* )pVB, pSnowmanMesh->GetNumVertices(), uStride, &pMin, &pMax);
+		pMin *= 0.05;
+	pMax *= 0.05;
+	Collider col(pMin, pMax);
+	colliders.push_back(col);
 	return true;
 }
