@@ -30,7 +30,10 @@ CDXEngine* CDXEngine::Instance(HWND hWnd)
 {
     if(NULL == pInstance)
     {
-        pInstance = new CDXEngine(hWnd);
+		if(hWnd != NULL)
+		{
+			pInstance = new CDXEngine(hWnd);
+		}
     }
     return pInstance;
 }

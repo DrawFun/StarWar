@@ -13,7 +13,7 @@ protected:
 	CDXEngine(HWND hWnd);	
 
 public:
-	static CDXEngine* Instance(HWND hWnd);
+	static CDXEngine* Instance(HWND hWnd = NULL);
     static void Destroy();
 	LPDIRECT3DDEVICE9 GetDxDevice();
 	LPDIRECT3D9 GetDx();

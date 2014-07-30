@@ -1,41 +1,11 @@
-#include "Player.h"
+#include "Mine.h"
 
-//Vectors for view and position
-
-//Snowman related variables
-D3DXVECTOR3	snowmanPos(10.0f, -30.0f, 10.0f); //Position
-LPDIRECT3DTEXTURE9 pSnowmanTexture0 = NULL; //First texture
-LPDIRECT3DTEXTURE9 pSnowmanTexture1 = NULL; //Second texture
-LPDIRECT3DVERTEXBUFFER9 pSnowmanVertexBuffer = NULL; //D3D vertext buffer 
-LPD3DXMESH pSnowmanMesh = NULL; //Point to snowman mesh
-D3DMATERIAL9 *pSnowmanMeshMaterials = NULL; //Point to snowman mesh material
-unsigned long snowManNumMaterials = 0L; //Number of material
-D3DXMATRIX snowmanRX, snowmanRY, snowmanRZ;
-float rx, ry, rz;
-
-CPlayer::CPlayer(HWND hWnd)
-{
-	m_hWnd = hWnd;
-	m_position = D3DXVECTOR3(0.0f, -25.0f, -10.0f);
-	moveSpeed = 20;
-}
-
-void CPlayer::Draw()
-{
-
-}
-
-void CPlayer::Move()
-{
-
-}
-
-void CPlayer::Update()
+void CMine::Update()
 {
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
-	
-	UpdateMatrix();
 
+	m_rotation.y += m_rotateSpeed;
+	UpdateMatrix();
 	//Set texture on stage 0
 	pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
@@ -60,9 +30,11 @@ void CPlayer::Update()
         pSnowmanMesh->DrawSubset(i);
     }
 }
+	
+bool CMine::InitVertices()
+{	
+		
 
-bool CPlayer::InitVertices()
-{
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
 
 	//Init snowman x model
@@ -86,24 +58,22 @@ bool CPlayer::InitVertices()
     pD3DXMtrlBuffer->Release();
 	return true;
 }
-
-bool CPlayer::InitNormals()
+	
+bool CMine::InitTextures()
 {
-	return true;
-}
 
-bool CPlayer::InitTextures()
-{
+	
 	//TODO: NULL POINT FAIL
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
 
 	//Create textures from files
 	D3DXCreateTextureFromFile( pd3dDevice, "Resource//Snowman1.jpg", &pSnowmanTexture0);
 	D3DXCreateTextureFromFile( pd3dDevice, "Resource//Snowman2.jpg", &pSnowmanTexture1);
+		
 	return true;
 }
-
-
-
-
-
+	
+bool CMine::InitNormals()
+{
+	return true;
+}

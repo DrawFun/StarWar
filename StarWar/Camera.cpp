@@ -15,13 +15,13 @@
 
 extern D3DXVECTOR3 g_vEye;    // Eye Position
 
-CCamera::CCamera(CNode *target, const D3DXVECTOR3 &position)
+CCamera::CCamera(CGameNode *target, const D3DXVECTOR3 &position)
 {	
-	this->target = target;
+	this->m_target = target;
 	m_offsetPosition = D3DXVECTOR3(position);    
 }
 
 void CCamera::LateUpdate()
 {
-	g_vEye = target->GetPosition() + m_offsetPosition;
+	g_vEye = m_target->GetPosition() + m_offsetPosition;
 }

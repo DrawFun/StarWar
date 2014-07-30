@@ -18,6 +18,8 @@
 #include "Camera.h"
 #include "DXEngine.h"
 #include "Player.h"
+#include "Mine.h"
+#include "Controller.h"
 
 //------------------------------------------------------------------------------
 // GLOBALS VARIABLES
@@ -34,6 +36,8 @@ CTerrain *pCTerrain = NULL;
 CCamera *camera = NULL;
 CDXEngine  *dxEngine = NULL;
 CPlayer *player = NULL;
+CMine *mine = NULL;
+CController *controller = NULL;
 
 float mapMinX;
 float mapMaxX;
@@ -131,9 +135,18 @@ int WINAPI WinMain(	HINSTANCE hInstance,
 
 	player = new CPlayer(g_hWnd);
 	player->InitPosition(g_vEye);
-	player->InitVertices(g_pd3dDevice);
+	player->SetScale(D3DXVECTOR3(0.05,0.05,0.05));
+	player->InitVertices();
+
+	mine = new CMine(0.01);
+	mine->InitPosition(g_snowmanPos + D3DXVECTOR3(5,0,5));
+	mine->SetScale(D3DXVECTOR3(0.05,0.05,0.05));
+	mine->InitVertices();
+	mine->InitTextures();
 	
 	camera = new CCamera(player, D3DXVECTOR3(0, 30, -30));
+
+	controller = new CController(player);
 
 	//Init D3D related resource here
 	init();
@@ -420,7 +433,21 @@ void render( void )
 
 	//Get last input and update the view matrix
 	//camera->GetRealTimeUserInput(g_bMousing, g_fElpasedTime);
-	player->Controller(g_bMousing, g_fElpasedTime);
+
+		//Get current mouse position
+	POINT mousePosit;
+	GetCursorPos(&mousePosit);
+	ScreenToClient(g_hWnd, &mousePosit);
+		//Get ket input
+	
+
+	ControllerInput input;
+	input.isLButtonDown = g_bMousing;
+	input.elpasedTime = g_fElpasedTime;
+	input.currentMousePosition = mousePosit;
+	GetKeyboardState(input.keys);
+
+	controller->Control(input);
 	camera->LateUpdate();
 	updateViewMatrix();
 
@@ -436,7 +463,9 @@ void render( void )
 	//Draw terrain
 	pCTerrain->Draw();
 	
-	player->Update(g_pd3dDevice);
+	player->Update();
+
+	mine->Update();
 
 	//Draw snowman
 	D3DXMATRIX snowmanMove, snowmanScale, snowmanWorldMat;	

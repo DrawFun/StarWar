@@ -36,7 +36,16 @@
     <ClCompile Include="Player.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Node.cpp">
+    <ClCompile Include="Scene.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Mine.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GameNode.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -62,7 +71,16 @@
     <ClInclude Include="Player.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Node.h">
+    <ClInclude Include="Scene.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Mine.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GameNode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

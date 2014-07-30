@@ -13,16 +13,16 @@
 #ifndef _STARWAR_CAMERA_H_
 #define _STARWAR_CAMERA_H_
 
-#include "Node.h"
+#include "GameNode.h"
 
 class CCamera
 {
 protected:
-	CNode *target;
+	CGameNode *m_target;
 	D3DXVECTOR3 m_offsetPosition;
 
 public:
-	CCamera(CNode *target, const D3DXVECTOR3 &position);
+	CCamera(CGameNode *target, const D3DXVECTOR3 &position);
 	void LateUpdate();
 };
 
