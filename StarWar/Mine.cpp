@@ -78,6 +78,6 @@ bool CMine::InitColliders()
 		pMin *= 0.05;
 	pMax *= 0.05;
 	Collider col(pMin, pMax);
-	colliders.push_back(col);
+	m_colliders.push_back(col);
 	return true;
 }

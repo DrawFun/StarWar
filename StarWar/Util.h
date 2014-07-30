@@ -11,7 +11,10 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <assert.h>
+#include <math.h>
 #include <vector>
+
+const float CAMERA_PITCH_LIMITATION = 0.3f;
 
 //Vertex containing position, normal and texture.
 struct PositionNormalTexVertex
@@ -72,6 +75,16 @@ struct PositionNormalSpecularColorTexVertex
 		float nx, float ny, float nz, D3DCOLOR color,
 		float tx, float ty) : _x(x), _y(y), _z(z), 
 		_nx(nx), _ny(ny), _nz(nz), _color(color), _tx(tx), _ty(ty){}
+};
+
+class Util
+{
+public:
+	static inline void Clip(float low, float high, float &number)
+	{
+		number = (number > low) ? number : low;
+		number = (number < high) ? number : high;	
+	}
 };
 
 #endif

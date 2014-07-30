@@ -17,7 +17,12 @@ D3DXVECTOR3 CGameNode::GetRotation()
 
 std::vector<Collider> CGameNode::GetCollider()
 {
-	return colliders;
+	return m_colliders;
+}
+
+float CGameNode::GetMoveSpeed()
+{
+	return m_moveSpeed;
 }
 
 void CGameNode::SetPosition(D3DXVECTOR3 &position)
@@ -38,6 +43,10 @@ void CGameNode::SetRotation(D3DXVECTOR3 &rotation)
 	UpdateMatrix();
 }
 
+void CGameNode::SetMoveSpeed(float speed)
+{
+	m_moveSpeed = speed;
+}
 
 bool CGameNode::InitPosition(const D3DXVECTOR3 &position, const D3DXVECTOR3 &scale, const D3DXVECTOR3 &rotation)
 {

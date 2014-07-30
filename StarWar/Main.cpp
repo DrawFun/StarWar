@@ -66,12 +66,6 @@ LPD3DXMESH g_pSnowmanMesh = NULL; //Point to snowman mesh
 D3DMATERIAL9 *g_pSnowmanMeshMaterials = NULL; //Point to snowman mesh material
 unsigned long g_snowManNumMaterials = 0L; //Number of material
 
-//Vectors for view and position
-D3DXVECTOR3	g_vEye(0.0f, -25.0f, 0.0f);    // Eye Position
-D3DXVECTOR3	g_vLook(0.0f, 0.0f, 1.0f);  // Look Vector
-D3DXVECTOR3	g_vUp(0.0f, 1.0f, 0.0f);      // Up Vector
-D3DXVECTOR3	g_vRight(1.0f, 0.0f, 0.0f);   // Right Vector
-
 //------------------------------------------------------------------------------
 // PROTOTYPES
 //------------------------------------------------------------------------------
@@ -134,7 +128,7 @@ int WINAPI WinMain(	HINSTANCE hInstance,
 	g_pd3dDevice = dxEngine->GetDxDevice();
 
 	player = new CPlayer(g_hWnd);
-	player->InitPosition(g_vEye);
+	player->InitPosition(D3DXVECTOR3(0.0f, -25.0f, 0.0f));
 	player->SetScale(D3DXVECTOR3(0.05,0.05,0.05));
 	player->InitVertices();	
 	player->InitColliders();
@@ -343,62 +337,6 @@ void init( void )
 }
 
 //------------------------------------------------------------------------------
-// Name : updateViewMatrix()
-// Desc : Builds a view matrix suitable for Direct3D according to modified look, up, eye vectors.
-// Explaination:
-//        Continue to use the matrix transformer from first person fps solution.
-//
-// Here's what the final matrix should look like:
-//
-//  |   rx     ux     lx    0 |
-//  |   ry     uy     ly    0 |
-//  |   rz     uz     lz    0 |
-//  | -(r.e) -(u.e) -(l.e)  1 |
-//
-// Where r = Right vector
-//       u = Up vector
-//       l = Look vector
-//       e = Eye position in world space
-//       . = Dot-product operation
-//
-//------------------------------------------------------------------------------
-void updateViewMatrix( void )
-{
-	D3DXMATRIX view;
-	D3DXMatrixIdentity( &view );
-
-	//Re-calculate then normalize the right vector according the look and up directions
-	D3DXVec3Normalize( &g_vLook, &g_vLook );
-	D3DXVec3Cross( &g_vRight, &g_vUp, &g_vLook );
-	D3DXVec3Normalize( &g_vRight, &g_vRight );
-	D3DXVec3Cross( &g_vUp, &g_vLook, &g_vRight );
-	D3DXVec3Normalize( &g_vUp, &g_vUp );
-
-	view._11 = g_vRight.x;
-    view._12 = g_vUp.x;
-    view._13 = g_vLook.x;
-	view._14 = 0.0f;
-
-	view._21 = g_vRight.y;
-    view._22 = g_vUp.y;
-    view._23 = g_vLook.y;
-	view._24 = 0.0f;
-
-	view._31 = g_vRight.z;
-    view._32 = g_vUp.z;
-    view._33 = g_vLook.z;
-	view._34 = 0.0f;
-
-	view._41 = -D3DXVec3Dot( &g_vEye, &g_vRight );
-	view._42 = -D3DXVec3Dot( &g_vEye, &g_vUp );
-	view._43 = -D3DXVec3Dot( &g_vEye, &g_vLook );
-	view._44 =  1.0f;
-
-	g_pd3dDevice->SetTransform( D3DTS_VIEW, &view ); 
-
-}
-
-//------------------------------------------------------------------------------
 // Name: shutDown()
 // Desc: release resources and close window
 //------------------------------------------------------------------------------
@@ -459,7 +397,7 @@ void render( void )
 	D3DXMatrixScaling(&matWorld, 1.0f, 1.0f, 1.0f);
     g_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
 	//Draw skybox
-	pCSkyBox->Draw(g_vEye);
+	//pCSkyBox->Draw(g_vEye);
 	//Draw terrain
 	pCTerrain->Draw();
 	
@@ -506,9 +444,5 @@ void render( void )
 
     g_pd3dDevice->EndScene();
     g_pd3dDevice->Present( NULL, NULL, NULL, NULL );
-
-	player->vUp = g_vUp;
-	player->vRight = g_vRight;
-	player->vLook = g_vLook;
 }
 

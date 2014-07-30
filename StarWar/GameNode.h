@@ -10,7 +10,9 @@ protected:
 	D3DXVECTOR3 m_position;
 	D3DXVECTOR3 m_scale;
 	D3DXVECTOR3 m_rotation;	
-	std::vector<Collider> colliders;
+	std::vector<Collider> m_colliders;
+	
+	float m_moveSpeed;
 
 public:		
 	bool InitPosition
@@ -33,10 +35,12 @@ public:
 	D3DXVECTOR3 GetPosition();
 	D3DXVECTOR3 GetRotation();
 	D3DXVECTOR3 GetScale();
+	float GetMoveSpeed();
 	std::vector<Collider> GetCollider();
 	void SetPosition(D3DXVECTOR3 &position);
 	void SetScale(D3DXVECTOR3 &scale);
 	void SetRotation(D3DXVECTOR3 &rotation);
+	void SetMoveSpeed(float speed);
 };
 
 #endif

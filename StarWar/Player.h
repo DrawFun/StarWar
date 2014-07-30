@@ -11,7 +11,6 @@ protected:
 	POINT ptCurrentMousePosit; //Current mouse position
 
 	float elpasedTime; //Elapsed time between current time and last time	
-	float moveSpeed; //Move speed
 
 public:
 	//Vectors for view and position
@@ -25,8 +24,6 @@ public:
 	void Update();
 	bool InitVertices();
 	bool InitColliders();
-	void Draw();
-	void Move();
 	void Controller(bool isLButtonDown, float elpasedTime);
 };
 

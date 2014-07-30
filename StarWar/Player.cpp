@@ -17,17 +17,7 @@ CPlayer::CPlayer(HWND hWnd)
 {
 	m_hWnd = hWnd;
 	m_position = D3DXVECTOR3(0.0f, -25.0f, -10.0f);
-	moveSpeed = 20;
-}
-
-void CPlayer::Draw()
-{
-
-}
-
-void CPlayer::Move()
-{
-
+	m_moveSpeed = 20;
 }
 
 void CPlayer::Update()
@@ -104,7 +94,7 @@ bool CPlayer::InitColliders()
 	pMin *= 0.05;
 	pMax *= 0.05;
 	Collider col(pMin, pMax);
-	colliders.push_back(col);
+	m_colliders.push_back(col);
 	return true;
 }
 
