@@ -2,44 +2,24 @@
 //Use to read height map
 #include <fstream>
 
-using namespace std;
-
 //------------------------------------------------------------------------------
 // Name: CTerrain::CTerrain(int sizeX, int sizeZ, int xBase, int zBase, int heightLimit, int heightBase, 
 //			float rate, const LPCSTR pHeightRawFileName, const LPCSTR pTexFileName, LPDIRECT3DDEVICE9 g_pd3dDevice)
 // Desc: Terrain constructor. 
 //------------------------------------------------------------------------------
 CTerrain::CTerrain(int sizeX, int sizeZ, int xBase, int zBase, int heightLimit, int heightBase, 
-	float rate, const LPCSTR pHeightRawFileName, const LPCSTR pTexFileName, LPDIRECT3DDEVICE9 g_pd3dDevice) : 
+	float rate) : 
 	m_sizeX(sizeX), m_sizeZ(sizeZ), m_xBase(xBase), m_zBase(zBase), m_heightLimit(heightLimit), 
-	m_heightBase(heightBase), m_rate(rate), m_pd3dDevice(g_pd3dDevice)
+	m_heightBase(heightBase), m_rate(rate)
 {
-	m_pHeightData = NULL;
-	m_pVertexArray = NULL;
-	m_pIndices = NULL;
-	m_pTexture = NULL;	
-	//Try to read height map and texture files. 
-	if(LoadHeightRaw(pHeightRawFileName) && LoadTexture(pTexFileName))
-	{
-		//Init terrain.
-		InitVertices();
-		InitIndices();
-		//Init normal of each vertex in terrain for specular light effect. 		
-		InitNormal();
-	}
-	else
-	{
-		//Fail to load data from file. Release resource and quit.
-		Release();
-		exit(1);
-	}
+
 }
 
 //------------------------------------------------------------------------------
-// Name: CTerrain::Release()
-// Desc: Release resource. 
+// Name: CTerrain::~CTerrain()
+// Desc: Deconstructor.
 //------------------------------------------------------------------------------
-void CTerrain::Release()
+CTerrain::~CTerrain()
 {
 	if(m_pHeightData != NULL)
 	{
@@ -60,21 +40,12 @@ void CTerrain::Release()
 }
 
 //------------------------------------------------------------------------------
-// Name: CTerrain::~CTerrain()
-// Desc: Deconstructor.
-//------------------------------------------------------------------------------
-CTerrain::~CTerrain()
-{
-	Release();
-}
-
-//------------------------------------------------------------------------------
 // Name: CTerrain::LoadHeightRaw(const LPCSTR pHeightRawFileName)
 // Desc: Load the raw height data from file.
 //------------------------------------------------------------------------------
-bool CTerrain::LoadHeightRaw(const LPCSTR pHeightRawFileName)
+bool CTerrain::LoadHeightRaw(const LPCSTR pHeightRawFileName, LPDIRECT3DDEVICE9 pd3dDevice)
 {
-	ifstream inFile(pHeightRawFileName, ios::in | ios_base::binary);
+	std::ifstream inFile(pHeightRawFileName, std::ios::in | std::ios_base::binary);
 	//Read data or report error. 
 	if(inFile != NULL)
 	{
@@ -105,10 +76,10 @@ bool CTerrain::LoadHeightRaw(const LPCSTR pHeightRawFileName)
 // Name: CTerrain::LoadTexture(const LPCSTR pTexFileName)
 // Desc: Load terrain texture from file.
 //------------------------------------------------------------------------------
-bool CTerrain::LoadTexture(const LPCSTR pTexFileName)
+bool CTerrain::LoadTexture(const LPCSTR pTexFileName, LPDIRECT3DDEVICE9 pd3dDevice)
 {
 	//Check whether pointer to D3D device is available
-	if(NULL == m_pd3dDevice)
+	if(NULL == pd3dDevice)
 	{
 		::MessageBox(NULL, "Null global D3D device pointer!", "Error During: CTerrain::LoadTexture", MB_OK | MB_ICONSTOP);
 		return false;
@@ -118,7 +89,7 @@ bool CTerrain::LoadTexture(const LPCSTR pTexFileName)
 	HRESULT hRet;
 
 	//Load textures from files. 
-	hRet = D3DXCreateTextureFromFile(m_pd3dDevice, pTexFileName, &m_pTexture);
+	hRet = D3DXCreateTextureFromFile(pd3dDevice, pTexFileName, &m_pTexture);
 
 	//Check loading result
 	if(FAILED(hRet))
@@ -135,26 +106,49 @@ bool CTerrain::LoadTexture(const LPCSTR pTexFileName)
 // Name: CTerrain::InitVertices(void)
 // Desc: Create vertex buffer. Init vertex buffer accoring to the raw height data.
 //------------------------------------------------------------------------------
-void CTerrain::InitVertices(void)
+bool CTerrain::InitVertices(void)
 {
-	//Create vertex buffer 
-	m_pVertexArray = (TerrainVertex*)malloc(m_sizeX * m_sizeZ * sizeof(TerrainVertex));	
+	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
 
-	//Init one by one
-	for(int i = 0, z = 0; z < m_sizeZ; ++z)
+	const LPCSTR pHeightRawFileName = "Resource//Heighmap.raw";
+	const LPCSTR pTexFileName = "Resource//SnowTerrain.jpg";
+	
+	m_pHeightData = NULL;
+	m_pVertexArray = NULL;
+	m_pIndices = NULL;
+	m_pTexture = NULL;	
+
+	//Try to read height map and texture files. 
+	if(LoadHeightRaw(pHeightRawFileName, pd3dDevice) && LoadTexture(pTexFileName, pd3dDevice))
 	{
-		for(int x = 0; x < m_sizeX; ++x)
+		//Create vertex buffer 
+		m_pVertexArray = (TerrainVertex*)malloc(m_sizeX * m_sizeZ * sizeof(TerrainVertex));	
+
+		//Init one by one
+		for(int i = 0, z = 0; z < m_sizeZ; ++z)
 		{
-			//Get raw height data in index position(x, z)
-			float y = GetHeightData(x,z);
-			//Init TerrainVertex
-			m_pVertexArray[i++] = TerrainVertex
-				(m_xBase + x * m_rate, y, m_zBase + z * m_rate, //Init world position according to zoom rate and base offset
-				0, 0, 0, //Leave normal initialization later
-				0xffffff00, //White as it is snow
-				(float)x, (float)z); //Texture position
+			for(int x = 0; x < m_sizeX; ++x)
+			{
+				//Get raw height data in index position(x, z)
+				float y = GetHeightData(x,z);
+				//Init TerrainVertex
+				m_pVertexArray[i++] = TerrainVertex
+					(m_xBase + x * m_rate, y, m_zBase + z * m_rate, //Init world position according to zoom rate and base offset
+					0, 0, 0, //Leave normal initialization later
+					0xffffff00, //White as it is snow
+					(float)x, (float)z); //Texture position
+			}
 		}
+		InitIndices();
+		//Init normal of each vertex in terrain for specular light effect. 		
+		InitNormal();
+		return true;
 	}
+	else
+	{
+		return false;
+	}
+
 }
 
 //------------------------------------------------------------------------------
@@ -263,14 +257,16 @@ void CTerrain::InitNormal(void)
 // Name: CTerrain::Draw(void)
 // Desc: Draw terrain.
 //------------------------------------------------------------------------------
-void CTerrain::Draw(void)
+void CTerrain::Update(void)
 {
+	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
+
 	//Set the textures to be used
-	m_pd3dDevice->SetTexture(0,m_pTexture);
+	pd3dDevice->SetTexture(0,m_pTexture);
 	//Set the vector FVF format
-	m_pd3dDevice->SetFVF(TerrainVertex::FVF);
+	pd3dDevice->SetFVF(TerrainVertex::FVF);
 	//Draw terrain
-	m_pd3dDevice->DrawIndexedPrimitiveUP
+	pd3dDevice->DrawIndexedPrimitiveUP
 		(D3DPT_TRIANGLELIST,  //Primitive type
 		0, //Starting vertex id
 		m_sizeX * m_sizeZ, //Vertex number

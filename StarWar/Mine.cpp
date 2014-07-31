@@ -4,8 +4,9 @@ void CMine::Update()
 {
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
 
-	m_rotation.y += m_rotateSpeed;
-	UpdateMatrix();
+	m_transform.Yaw(m_rotateSpeed);
+	m_transform.UpdateMatrix();
+	
 	//Set texture on stage 0
 	pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
@@ -32,9 +33,7 @@ void CMine::Update()
 }
 	
 bool CMine::InitVertices()
-{	
-		
-
+{			
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
 
 	//Init snowman x model
@@ -80,4 +79,30 @@ bool CMine::InitColliders()
 	Collider col(pMin, pMax);
 	m_colliders.push_back(col);
 	return true;
+}
+
+
+void CMine::CollidingCallback(CGameNode *collided)
+{
+}
+	
+
+void CMine::CollidedCallback(CGameNode *colliding)
+{
+	switch(colliding->GetType())
+	{
+	case MINE:
+		assert(0);
+		break;
+	case HUMAN:
+		AllocConsole();//注意检查返回值
+		_cprintf("HUMAN\n");
+	case ZERG_TELEPORT:
+	case ZERG:
+		break;
+	case PLATFORM:
+		break;
+	default:
+		break;
+	}
 }

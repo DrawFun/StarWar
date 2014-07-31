@@ -1,30 +1,17 @@
 #include "Player.h"
+#include "Platform.h"
 
-//Vectors for view and position
-
-//Snowman related variables
-D3DXVECTOR3	snowmanPos(10.0f, -30.0f, 10.0f); //Position
-LPDIRECT3DTEXTURE9 pSnowmanTexture0 = NULL; //First texture
-LPDIRECT3DTEXTURE9 pSnowmanTexture1 = NULL; //Second texture
-LPDIRECT3DVERTEXBUFFER9 pSnowmanVertexBuffer = NULL; //D3D vertext buffer 
-LPD3DXMESH pSnowmanMesh = NULL; //Point to snowman mesh
-D3DMATERIAL9 *pSnowmanMeshMaterials = NULL; //Point to snowman mesh material
-unsigned long snowManNumMaterials = 0L; //Number of material
-D3DXMATRIX snowmanRX, snowmanRY, snowmanRZ;
-float rx, ry, rz;
-
-CPlayer::CPlayer(HWND hWnd)
-{
-	m_hWnd = hWnd;
-	m_position = D3DXVECTOR3(0.0f, -25.0f, -10.0f);
+CPlayer::CPlayer()
+{	
 	m_moveSpeed = 20;
+	m_type = HUMAN;
 }
 
 void CPlayer::Update()
 {
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
 	
-	UpdateMatrix();
+	m_transform.UpdateMatrix();
 
 	//Set texture on stage 0
 	pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
@@ -99,6 +86,29 @@ bool CPlayer::InitColliders()
 }
 
 
+void CPlayer::CollidingCallback(CGameNode *collided)
+{
+	switch(collided->GetType())
+	{
+	case HUMAN:
+		assert(0);
+		break;
+	case ZERG:
+	case ZERG_TELEPORT:
+	case MINE:
+		break;
+	case PLATFORM:
+		m_transform.Translate(D3DXVECTOR3(0, dynamic_cast<CPlatform *> (collided)->GetHeight(), 0));	
+		m_transform.SetParents(&collided->GetTransform());
+		m_parents = collided;		
+		break;
+	default:
+		break;
+	}
+}
+	
 
+void CPlayer::CollidedCallback(CGameNode *colliding)
+{
 
-
+}

@@ -1,7 +1,7 @@
-#ifndef _SNOWMAN_TERRAIN_H_
-#define _SNOWMAN_TERRAIN_H_
+#ifndef _STARWAR_TERRAIN_H_
+#define _STARWAR_TERRAIN_H_
 
-#include "Util.h"
+#include "DXEngine.h"
 
 //Define TerrainVertex
 typedef PositionNormalSpecularColorTexVertex TerrainVertex;
@@ -13,29 +13,6 @@ typedef PositionNormalSpecularColorTexVertex TerrainVertex;
 
 class CTerrain
 {
-public:
-	//Constructor.
-	CTerrain(int sizeX, int sizeZ, int xBase, int zBase, int heightLimit, int heightBase, 
-		float rate, const LPCSTR pHeightRawFileName, const LPCSTR pTexFileName, LPDIRECT3DDEVICE9 g_pd3dDevice);
-	//Deconstructor.
-	~CTerrain();
-	//Draw the terrain.
-	void Draw();	
-	//Get the map constraint.
-	void GetSpaceConstraint(float &x1, float &x2, float &z1, float &z2);
-private:	
-	//Release resource.
-	void Release();
-	//Create vertex buffer.
-	void InitVertices();
-	//Create indices buffer with corresponding vertex id.
-	void InitIndices();
-	//Calculate the normals of all vertices.
-	void InitNormal();
-	//Read height map from file.
-	bool LoadHeightRaw(const LPCSTR pHeightRawFileName);
-	//Read texture from file.
-	bool LoadTexture(const LPCSTR pTexFileName);
 private:
 	//Number of vertex in x-axis. Use as length of terrain. 
 	int m_sizeX;
@@ -59,9 +36,29 @@ private:
 	int *m_pIndices;
 	//Point to the texture.
 	LPDIRECT3DTEXTURE9 m_pTexture;
-	//Point to the global D3D device.
-	LPDIRECT3DDEVICE9 m_pd3dDevice;
+
+public:
+	//Constructor.
+	CTerrain(int sizeX, int sizeZ, int xBase, int zBase, int heightLimit, int heightBase, 
+		float rate);
+	//Deconstructor.
+	~CTerrain();
+	//Update the terrain.
+	void Update();	
+	//Get the map constraint.
+	void GetSpaceConstraint(float &x1, float &x2, float &z1, float &z2);
+	//Create vertex buffer.
+	bool InitVertices();
+
 private:
+	//Create indices buffer with corresponding vertex id.
+	void InitIndices();
+	//Calculate the normals of all vertices.
+	void InitNormal();
+	//Read height map from file.
+	bool LoadHeightRaw(const LPCSTR pHeightRawFileName, LPDIRECT3DDEVICE9 pd3dDevice);
+	//Read texture from file.
+	bool LoadTexture(const LPCSTR pTexFileName, LPDIRECT3DDEVICE9 pd3dDevice);
 	//Get the raw height data
 	inline float GetHeightData(int x, int z) {return (float)m_pHeightData[z * m_sizeX + x];}
 };

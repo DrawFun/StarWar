@@ -19,7 +19,9 @@
 #include "DXEngine.h"
 #include "Player.h"
 #include "Mine.h"
+#include "Platform.h"
 #include "Controller.h"
+#include "Transform.h"
 
 //------------------------------------------------------------------------------
 // GLOBALS VARIABLES
@@ -36,13 +38,9 @@ CTerrain *pCTerrain = NULL;
 CCamera *camera = NULL;
 CDXEngine  *dxEngine = NULL;
 CPlayer *player = NULL;
+CPlatform *platform = NULL;
 CMine *mine = NULL;
 CController *controller = NULL;
-
-float mapMinX;
-float mapMaxX;
-float mapMinZ;
-float mapMaxZ;
 
 //Controler related variables 
 POINT g_ptLastMousePosit; //Last mouse position
@@ -53,19 +51,6 @@ float g_fElpasedTime; //Elapsed time between current time and last time
 double g_dCurTime; //Current time
 double g_dLastTime; //Last time
 
-//Spot light variable
-D3DLIGHT9 g_light0;
-D3DXVECTOR3	g_spotLightPos(10.0f, -10.0f, 10.0f); //Position
-
-//Snowman related variables
-D3DXVECTOR3	g_snowmanPos(10.0f, -30.0f, 10.0f); //Position
-LPDIRECT3DTEXTURE9 g_pSnowmanTexture0 = NULL; //First texture
-LPDIRECT3DTEXTURE9 g_pSnowmanTexture1 = NULL; //Second texture
-LPDIRECT3DVERTEXBUFFER9 g_pSnowmanVertexBuffer = NULL; //D3D vertext buffer 
-LPD3DXMESH g_pSnowmanMesh = NULL; //Point to snowman mesh
-D3DMATERIAL9 *g_pSnowmanMeshMaterials = NULL; //Point to snowman mesh material
-unsigned long g_snowManNumMaterials = 0L; //Number of material
-
 //------------------------------------------------------------------------------
 // PROTOTYPES
 //------------------------------------------------------------------------------
@@ -73,11 +58,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 				   LPSTR lpCmdLine, int nCmdShow);
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 void init(void);
-void setupLight(void);
 void shutDown(void);
 void render(void);
-void getRealTimeUserInput(void);
-void updateViewMatrix(void);
 
 //------------------------------------------------------------------------------
 // Name: WinMain()
@@ -127,18 +109,33 @@ int WINAPI WinMain(	HINSTANCE hInstance,
 	g_pD3D = dxEngine->GetDx();
 	g_pd3dDevice = dxEngine->GetDxDevice();
 
-	player = new CPlayer(g_hWnd);
-	player->InitPosition(D3DXVECTOR3(0.0f, -25.0f, 0.0f));
-	player->SetScale(D3DXVECTOR3(0.05,0.05,0.05));
+	pCSkyBox = new CSkyBox();
+	pCSkyBox->InitVertices();
+	pCSkyBox->InitColliders();
+
+	//Construct terrain
+	pCTerrain = new CTerrain(64, 64, -128, -128, 2, 0, 8);
+	pCTerrain->InitVertices();
+
+	platform = new CPlatform(10, 2, 10);
+	CTransform platformTramsform(D3DXVECTOR3(25.0f, -30.0f, 25.0f));
+	platform->InitTransform(platformTramsform);
+	platform->InitVertices();
+	platform->InitColliders();
+
+	player = new CPlayer();
+	CTransform playerTramsform(D3DXVECTOR3(0.0f, -30.0f, 0.0f), D3DXVECTOR3(0.05,0.05,0.05));
+	player->InitTransform(playerTramsform);	
 	player->InitVertices();	
 	player->InitColliders();
 	
 	mine = new CMine(0.01);
-	mine->InitPosition(g_snowmanPos + D3DXVECTOR3(5,0,5));
-	mine->SetScale(D3DXVECTOR3(0.05,0.05,0.05));
+	CTransform mineTramsform(D3DXVECTOR3(0.0f, -30.0f, 0.0f) + D3DXVECTOR3(5,0,5), D3DXVECTOR3(0.05,0.05,0.05));
+	mine->InitTransform(mineTramsform);
 	mine->InitVertices();	
 	mine->InitColliders();
 	
+
 	camera = new CCamera(player, D3DXVECTOR3(0, -15, -15));
 
 	controller = new CController(player);
@@ -241,86 +238,11 @@ LRESULT CALLBACK WindowProc( HWND   hWnd,
 }
 
 //------------------------------------------------------------------------------
-// Name: setupLight(void)
-// Desc: Setup light setting.
-//------------------------------------------------------------------------------
-void setupLight(void)
-{
-	//Enable the lighting render
-	g_pd3dDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
-	//Full of white light
-    g_pd3dDevice->SetRenderState(D3DRS_AMBIENT, 
-		D3DCOLOR_COLORVALUE(1.0f, 1.0f, 1.0f, 1.0f));
-
-	//A spot light above the snowman
-	ZeroMemory( &g_light0, sizeof(D3DLIGHT9) );
-	g_light0.Diffuse    = D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f);
-    g_light0.Specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);	
-    g_light0.Type         = D3DLIGHT_SPOT;
-	g_light0.Position     = g_spotLightPos;
-	g_light0.Direction    = D3DXVECTOR3( 0.0f, -1.0f, 0.0f );
-    g_light0.Attenuation0 = 0.0f;
-    g_light0.Attenuation1 = 0.3f;
-    g_light0.Attenuation2 = 0.0f;
-	g_light0.Phi = 1.0f;
-	g_light0.Theta = 0.8f;
-    g_light0.Range        = 30.0f;
-    g_pd3dDevice->SetLight( 0, &g_light0 );
-	g_pd3dDevice->LightEnable(0, TRUE);
-
-	//Enable specular lighting
-	g_pd3dDevice->SetRenderState(D3DRS_NORMALIZENORMALS, true);
-	g_pd3dDevice->SetRenderState(D3DRS_SPECULARENABLE, true);
-}
-
-
-//------------------------------------------------------------------------------
 // Name: init()
 // Desc: Init the scene
 //------------------------------------------------------------------------------
 void init( void )
 {
-
-
-	//Init snowman x model
-	LPD3DXBUFFER pD3DXMtrlBuffer;
-
-    D3DXLoadMeshFromX( "Resource//Snowman.x", D3DXMESH_SYSTEMMEM, 
-                       g_pd3dDevice, NULL, 
-                       &pD3DXMtrlBuffer, NULL, &g_snowManNumMaterials, 
-                       &g_pSnowmanMesh );
-
-    D3DXMATERIAL *d3dxMaterials = (D3DXMATERIAL*)pD3DXMtrlBuffer->GetBufferPointer();
-    g_pSnowmanMeshMaterials = new D3DMATERIAL9[g_snowManNumMaterials];
-
-    for( unsigned long i = 0; i < g_snowManNumMaterials; ++i )
-    {
-        //Set materials
-        g_pSnowmanMeshMaterials[i] = d3dxMaterials[i].MatD3D;
-        //Set the ambient color for the material
-        g_pSnowmanMeshMaterials[i].Ambient = g_pSnowmanMeshMaterials[i].Diffuse;
-    }
-
-	//Create textures from files
-	D3DXCreateTextureFromFile( g_pd3dDevice, "Resource//Snowman1.jpg", &g_pSnowmanTexture0);
-	D3DXCreateTextureFromFile( g_pd3dDevice, "Resource//Snowman2.jpg", &g_pSnowmanTexture1);
-
-    pD3DXMtrlBuffer->Release();
-
-	//Construct skybox
-	LPCSTR pImageFileNameArray[CSkyBox::TOTAL_SIDES] = {
-		"Resource//alpine_front.jpg", "Resource//alpine_back.jpg", "Resource//alpine_left.jpg",
-		"Resource//alpine_right.jpg", "Resource//alpine_top.jpg", "Resource//SnowTerrain.jpg"
-	};
-	pCSkyBox = new CSkyBox(pImageFileNameArray, g_pd3dDevice);
-
-	//Construct terrain
-	pCTerrain = new CTerrain(64, 64, -128, -128, 2, -30, 4, "Resource//Heighmap.raw","Resource//SnowTerrain.jpg", g_pd3dDevice);
-	pCTerrain->GetSpaceConstraint(mapMinX, mapMaxX, mapMinZ, mapMaxZ);
-
-	//Setup lights
-	setupLight();
-
 	//Set samplers
 	g_pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	g_pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
@@ -330,10 +252,14 @@ void init( void )
 
     g_pd3dDevice->SetTransform( D3DTS_PROJECTION, &matProj );
     D3DXMatrixPerspectiveFovLH( &matProj, D3DXToRadian( 45.0f ), 
-                                800.0f / 600.0f, 0.1f, 100.0f );
+                                1280.0f / 900.0f, 0.1f, 200.0f );
     g_pd3dDevice->SetTransform( D3DTS_PROJECTION, &matProj );
 
-	
+	//Enable the lighting render
+	g_pd3dDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
+	//Full of white light
+	    g_pd3dDevice->SetRenderState(D3DRS_AMBIENT, 
+		0xffffffff);
 }
 
 //------------------------------------------------------------------------------
@@ -342,14 +268,6 @@ void init( void )
 //------------------------------------------------------------------------------
 void shutDown( void )
 {
-	if( g_pSnowmanMeshMaterials != NULL )
-        delete[] g_pSnowmanMeshMaterials;
-
-	if( g_pSnowmanMesh != NULL )
-        g_pSnowmanMesh->Release(); 
-
-    if( g_pSnowmanVertexBuffer != NULL )
-        g_pSnowmanVertexBuffer->Release(); 
 
 	CDXEngine::Destroy();
 
@@ -367,7 +285,7 @@ void render( void )
 
 	//Clear to the background
     g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
-                         D3DCOLOR_COLORVALUE(0.35f, 0.53f, 0.7, 1.0f), 1.0f, 0 );
+                         D3DCOLOR_COLORVALUE(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, 0 );
 
 	//Get last input and update the view matrix
 	//camera->GetRealTimeUserInput(g_bMousing, g_fElpasedTime);
@@ -391,56 +309,29 @@ void render( void )
 
 	//Draw skybox, terrain and snowman
     g_pd3dDevice->BeginScene();	
-	
+
+
 	//Init and set world matrix
 	D3DXMATRIX matWorld;
 	D3DXMatrixScaling(&matWorld, 1.0f, 1.0f, 1.0f);
     g_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
+
 	//Draw skybox
-	//pCSkyBox->Draw(g_vEye);
+	pCSkyBox->Update();
+
 	//Draw terrain
-	pCTerrain->Draw();
+	//pCTerrain->Update();
 	
-	player->Update();
+	platform->Update();	
+	
 
 	mine->Update();
+	player->Update();
+
+
+
 	camera->LateUpdate();
-	//Draw snowman
-	D3DXMATRIX snowmanMove, snowmanScale, snowmanWorldMat;	
-	//Zoom in the snowman scale
-	D3DXMatrixScaling( &snowmanScale, 0.05f, 0.05f, 0.05f );
-	//Tranlate to the default position
-	D3DXMatrixTranslation( &snowmanMove, g_snowmanPos.x, g_snowmanPos.y, g_snowmanPos.z);
-	
-	//Calculate the transformer matrix
-	snowmanWorldMat = snowmanScale * snowmanMove;
-	
-	//Transform the world according the generated matrix
-	g_pd3dDevice->SetTransform(D3DTS_WORLD, &snowmanWorldMat);
 
-	//Set texture on stage 0
-	g_pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	g_pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	//Set RGB mix method
-	g_pd3dDevice->SetTextureStageState(0, D3DTSS_TEXCOORDINDEX, 0);
-	g_pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP,   D3DTOP_MODULATE);
-	
-	//Set texture on stage 1
-	g_pd3dDevice->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	g_pd3dDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	//Set RGB mix method
-	g_pd3dDevice->SetTextureStageState(1, D3DTSS_TEXCOORDINDEX, 1);
-	g_pd3dDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
-
-    for( unsigned long i = 0; i < g_snowManNumMaterials; ++i )
-    {
-        g_pd3dDevice->SetMaterial(&g_pSnowmanMeshMaterials[i]);
-		
-		//Set multiple textures
-		g_pd3dDevice->SetTexture(0, g_pSnowmanTexture0);
-		g_pd3dDevice->SetTexture(1, g_pSnowmanTexture1);
-        g_pSnowmanMesh->DrawSubset(i);
-    }
 
     g_pd3dDevice->EndScene();
     g_pd3dDevice->Present( NULL, NULL, NULL, NULL );

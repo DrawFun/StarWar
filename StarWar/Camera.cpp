@@ -16,7 +16,7 @@
 CCamera::CCamera(CGameNode *target, D3DXVECTOR3 &position)
 {	
 	this->m_target = target;
-	m_offsetPosition = position - target->GetPosition();    
+	m_offsetPosition = position - target->GetTransform().GetPosition();    
 }
 
 void CCamera::UpdateViewMatrix()
@@ -31,12 +31,9 @@ void CCamera::UpdateViewMatrix()
 	D3DXVECTOR3 m_right = D3DXVECTOR3(1, 0, 0);
 	D3DXVECTOR3 m_up = D3DXVECTOR3(0, 1, 0);
 
-	D3DXVECTOR3 rotation = m_target->GetRotation();
+	D3DXVECTOR3 rotation = m_target->GetTransform().GetRotation();
 	
-	float xx = rotation.x;
-	//if(xx>0.3) xx = 0.3;
-	//if(xx<-0.3) xx = -0.3;
-	D3DXMatrixRotationX(&matrixRotationX, xx); 
+	D3DXMatrixRotationX(&matrixRotationX, rotation.x); 
 
 	D3DXMatrixRotationY(&matrixRotationY, rotation.y); 
 
@@ -50,8 +47,9 @@ void CCamera::UpdateViewMatrix()
 
 	D3DXVec3Normalize( &m_offsetPosition1, &m_offsetPosition1 );
 
-	eye = m_target->GetPosition() + m_offsetPosition1 * 50;
-	D3DXMatrixLookAtLH(&view, &eye, &m_target->GetPosition(), &m_up);
+	eye = m_target->GetTransform().GetPosition() + m_offsetPosition1 * 50;
+	m_position = eye;
+	D3DXMatrixLookAtLH(&view, &eye, &m_target->GetTransform().GetPosition(), &m_up);
 
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
 	pd3dDevice->SetTransform( D3DTS_VIEW, &view ); 

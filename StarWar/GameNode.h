@@ -1,46 +1,37 @@
 #ifndef _STARWAR_NODE_H_
 #define _STARWAR_NODE_H_
 
-#include "DXEngine.h"
+#include "Transform.h"
 #include "Collider.h"
 
 class CGameNode
 {
 protected:
-	D3DXVECTOR3 m_position;
-	D3DXVECTOR3 m_scale;
-	D3DXVECTOR3 m_rotation;	
+	CTransform m_transform;
 	std::vector<Collider> m_colliders;
 	
+	GameNodeType m_type;
 	float m_moveSpeed;
+	CGameNode *m_parents;
 
 public:		
-	bool InitPosition
-	(const D3DXVECTOR3 &position = D3DXVECTOR3(0, 0, 0), 
-	 const D3DXVECTOR3 &scale = D3DXVECTOR3(1, 1, 1),
-	 const D3DXVECTOR3 &rotation = D3DXVECTOR3(0, 0, 0));
+	bool InitTransform(const CTransform &transform);
 	virtual bool InitVertices() = 0;
 	virtual bool InitColliders() = 0;
 
 	virtual void Update() = 0;
-	
-	void Roll(float angle);
-	void Pitch(float angle);
-	void Yaw(float angle);
-	void Rotate(D3DXVECTOR3 &rotation);
-	void Translate(D3DXVECTOR3 &position);
-	void Scale(D3DXVECTOR3 &scale);
-	void UpdateMatrix();
 
-	D3DXVECTOR3 GetPosition();
-	D3DXVECTOR3 GetRotation();
-	D3DXVECTOR3 GetScale();
+	virtual void CollidingCallback(CGameNode *collided) = 0;
+	virtual void CollidedCallback(CGameNode *colliding) = 0;
+
 	float GetMoveSpeed();
+	GameNodeType GetType();
 	std::vector<Collider> GetCollider();
-	void SetPosition(D3DXVECTOR3 &position);
-	void SetScale(D3DXVECTOR3 &scale);
-	void SetRotation(D3DXVECTOR3 &rotation);
+	CTransform& GetTransform();
+	CGameNode *GetParents();
+
 	void SetMoveSpeed(float speed);
+	void SetParents(CGameNode *parents);
 };
 
 #endif

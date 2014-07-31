@@ -75,11 +75,13 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mine.cpp" />
     <ClCompile Include="GameNode.cpp" />
+    <ClCompile Include="Platform.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -88,11 +90,13 @@
     <ClInclude Include="DXEngine.h" />
     <ClInclude Include="Mine.h" />
     <ClInclude Include="GameNode.h" />
+    <ClInclude Include="Platform.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="Terrain.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>
   <ItemGroup>

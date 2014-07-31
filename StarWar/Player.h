@@ -6,25 +6,20 @@
 class CPlayer : public CGameNode
 {
 protected:
-	HWND m_hWnd;
-	POINT ptLastMousePosit; //Last mouse position
-	POINT ptCurrentMousePosit; //Current mouse position
-
-	float elpasedTime; //Elapsed time between current time and last time	
-
-public:
-	//Vectors for view and position
-	D3DXVECTOR3	vEye;    // Eye Position
-	D3DXVECTOR3	vLook;  // Look Vector
-	D3DXVECTOR3	vUp;      // Up Vector
-	D3DXVECTOR3	vRight;   // Right Vector
+	LPDIRECT3DTEXTURE9 pSnowmanTexture0; //First texture
+	LPDIRECT3DTEXTURE9 pSnowmanTexture1; //Second texture
+	LPDIRECT3DVERTEXBUFFER9 pSnowmanVertexBuffer; //D3D vertext buffer 
+	LPD3DXMESH pSnowmanMesh; //Point to snowman mesh
+	D3DMATERIAL9 *pSnowmanMeshMaterials; //Point to snowman mesh material
+	unsigned long snowManNumMaterials; //Number of material
 
 public:
-	CPlayer(HWND hWnd);
+	CPlayer();
 	void Update();
 	bool InitVertices();
 	bool InitColliders();
-	void Controller(bool isLButtonDown, float elpasedTime);
+	void CollidingCallback(CGameNode *collided);
+	void CollidedCallback(CGameNode *colliding);
 };
 
 #endif

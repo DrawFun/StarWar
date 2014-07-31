@@ -1,18 +1,16 @@
 #include "Controller.h"
 #include "Mine.h"
+#include "Platform.h"
 
-//extern D3DXVECTOR3	g_vEye;  // Look Vector
-//extern D3DXVECTOR3	g_vLook;  // Look Vector
-//extern D3DXVECTOR3	g_vUp;      // Up Vector
-//extern D3DXVECTOR3	g_vRight;   // Right Vector
 extern CMine *mine;
+extern CPlatform *platform;
 
 CController::CController(CGameNode *target)
 {
 	assert(target != NULL);
 	m_target = target;
-	m_position = target->GetPosition();
-	m_rotation = target->GetRotation();
+	m_position = target->GetTransform().GetPosition();
+	m_rotation = target->GetTransform().GetRotation();
 
 	AdjustTrasform();
 }
@@ -20,10 +18,13 @@ CController::CController(CGameNode *target)
 void CController::Control(const ControllerInput &input)
 {	
 	float moveSpeed = m_target->GetMoveSpeed();
+	m_position = m_target->GetTransform().GetPosition();
+	m_rotation = m_target->GetTransform().GetRotation();
 	float xAngle = 0, yAngle = 0;
 	POINT ptCurrentMousePosit;
 	ptCurrentMousePosit.x = input.currentMousePosition.x;
     ptCurrentMousePosit.y = input.currentMousePosition.y;
+	D3DXVECTOR3 attemptPosition = m_position;
 
 	//Rotation matrix used to tranformer the world
 	D3DXMATRIX matRotation;
@@ -62,32 +63,43 @@ void CController::Control(const ControllerInput &input)
 
 	// Up Arrow Key - View moves forward
 	if( input.keys['W'] & 0x80 )
-		m_position -= (m_look * -moveSpeed) * input.elpasedTime;
+		attemptPosition -= (m_look * -moveSpeed) * input.elpasedTime;
 
 	// Down Arrow Key - View moves backward
 	if( input.keys['S'] & 0x80 )
-		m_position += (m_look * -moveSpeed) * input.elpasedTime;
+		attemptPosition += (m_look * -moveSpeed) * input.elpasedTime;
 
 	// Left Arrow Key - View side-steps or strafes to the left
 	if( input.keys['A'] & 0x80 )
-		m_position -= (m_right * moveSpeed) * input.elpasedTime;
+		attemptPosition -= (m_right * moveSpeed) * input.elpasedTime;
 
 	// Right Arrow Key - View side-steps or strafes to the right
 	if( input.keys['D'] & 0x80 )
-		m_position += (m_right * moveSpeed) * input.elpasedTime;
+		attemptPosition += (m_right * moveSpeed) * input.elpasedTime;
 
-	if(!Collider::IsCollision(m_target->GetCollider(), mine->GetCollider(), m_position, mine->GetPosition()))
+	if(Collider::IsCollision(m_target->GetCollider(), mine->GetCollider(), attemptPosition, mine->GetTransform().GetPosition()))
+	{		
+		m_target->CollidingCallback(mine);
+		mine->CollidedCallback(m_target);
+		//m_position = m_target->GetPosition();
+	}
+	else if(Collider::IsCollision(m_target->GetCollider(), platform->GetCollider(), attemptPosition, platform->GetTransform().GetPosition()))
 	{
-		m_target->SetPosition(m_position);
+		if(m_target->GetParents() != platform)
+		{
+			m_target->CollidingCallback(platform);
+			platform->CollidedCallback(m_target);
+		}
 	}
 	else
 	{
-		m_position = m_target->GetPosition();
+		m_position = attemptPosition;
+		m_target->GetTransform().SetPosition(m_position);		
 	}
 
 	m_rotation += D3DXVECTOR3(xAngle, yAngle, 0);
 	Util::Clip(-CAMERA_PITCH_LIMITATION, CAMERA_PITCH_LIMITATION, m_rotation.x);
-	m_target->SetRotation(m_rotation);
+	m_target->GetTransform().SetRotation(m_rotation);
 
 	AdjustTrasform();
 }
@@ -100,7 +112,7 @@ void CController::AdjustTrasform()
 	m_right = D3DXVECTOR3(1, 0, 0);
 	m_up = D3DXVECTOR3(0, 1, 0);
 
-	D3DXVECTOR3 rotation = m_target->GetRotation();
+	D3DXVECTOR3 rotation = m_target->GetTransform().GetRotation();
 	D3DXMatrixRotationX(&matrixRotationX, rotation.x); 
 	D3DXMatrixRotationY(&matrixRotationY, rotation.y); 
 	D3DXMatrixRotationZ(&matrixRotationZ, rotation.z); 

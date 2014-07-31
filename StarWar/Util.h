@@ -12,9 +12,11 @@
 #include <d3dx9.h>
 #include <assert.h>
 #include <math.h>
+#include <conio.h>
 #include <vector>
 
 const float CAMERA_PITCH_LIMITATION = 0.3f;
+enum GameNodeType{HUMAN, MINE, ZERG, ZERG_TELEPORT, AIRPLANE, PLATFORM};
 
 //Vertex containing position, normal and texture.
 struct PositionNormalTexVertex
