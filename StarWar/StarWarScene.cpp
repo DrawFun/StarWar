@@ -2,13 +2,17 @@
 
 
 CStarWarScene::CStarWarScene()
-{
+{	
 	m_pSkyBox = new CSkyBox();
 	m_pTerrain = new CTerrain(300, 300, -150, -150, 2, -2, 2);
 	
 	m_pPlayer = new CPlayer();
 	CTransform playerTramsform(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.05,0.05,0.05));
 	m_pPlayer->InitTransform(playerTramsform);	
+
+	//rootNode.AddChild(&m_pSkyBox->GetTransform());
+	//rootNode.AddChild(&m_pTerrain->GetTransform());
+	rootNode.AddChild(&m_pPlayer->GetTransform());
 
 	m_listRootGameNodes.push_back(m_pSkyBox);
 	m_listRootGameNodes.push_back(m_pTerrain);
@@ -23,6 +27,7 @@ CStarWarScene::CStarWarScene()
 	{
 		m_pArrayPlatform[i] = new CPlatform(20.0f, 1.0f, 20.0f, 0.02f, 0.005f);
 		m_pArrayPlatform[i]->InitTransform(platformTramsforms[i]);
+		rootNode.AddChild(&m_pArrayPlatform[i]->GetTransform());
 		m_listRootGameNodes.push_back(m_pArrayPlatform[i]);
 	}
 
@@ -35,6 +40,7 @@ CStarWarScene::CStarWarScene()
 	{
 		m_pArrayMine[i] = new CMine(0.01f); 
 		m_pArrayMine[i]->InitTransform(mineTramsforms[i]);
+		rootNode.AddChild(&m_pArrayMine[i]->GetTransform());
 		m_listRootGameNodes.push_back(m_pArrayMine[i]);
 	}
 
@@ -47,6 +53,7 @@ CStarWarScene::CStarWarScene()
 	{
 		m_pArrayAirplane[i] = new CAirplane();
 		m_pArrayAirplane[i]->InitTransform(airplaneTramsforms[i]);
+		rootNode.AddChild(&m_pArrayAirplane[i]->GetTransform());
 		m_listRootGameNodes.push_back(m_pArrayAirplane[i]);
 	}
 
@@ -54,6 +61,7 @@ CStarWarScene::CStarWarScene()
 	m_pZergTeleport->InitTransform(CTransform(D3DXVECTOR3(50.0f, 0.0f, 50.0f)));
 	m_pZergTeleport->InitVertices();
 	m_pZergTeleport->InitColliders();
+	rootNode.AddChild(&m_pZergTeleport->GetTransform());
 	m_listRootGameNodes.push_back(m_pZergTeleport);
 
 	for(auto gameNode : m_listRootGameNodes)
@@ -72,6 +80,8 @@ CStarWarScene::CStarWarScene()
 void CStarWarScene::Update(ControllerInput &input)
 {
 	m_pController->Control(input);
+
+	rootNode.UpdateMatrix();
 
 	for(auto gameNode : m_listRootGameNodes)
 	{

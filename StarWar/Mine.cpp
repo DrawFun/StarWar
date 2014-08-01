@@ -3,9 +3,9 @@
 void CMine::Update()
 {
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
-
-	m_transform.Yaw(m_rotateSpeed);
-	m_transform.UpdateMatrix();
+	pd3dDevice->SetTransform(D3DTS_WORLD, &this->GetTransform().GetWorldMatrix());	
+	//m_transform.Yaw(m_rotateSpeed);
+	//m_transform.UpdateMatrix();
 	
 	//Set texture on stage 0
 	pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);

@@ -13,8 +13,6 @@ protected:
 	
 	GameNodeType m_type;
 	float m_moveSpeed;
-	CGameNode *m_parents;
-	std::list<CGameNode *> m_children;
 
 public:		
 	bool InitTransform(const CTransform &transform);
@@ -30,7 +28,6 @@ public:
 	GameNodeType GetType();
 	std::vector<Collider> GetCollider();
 	CTransform& GetTransform();
-	CGameNode *GetParents();
 
 	void SetMoveSpeed(float speed);
 	void SetParents(CGameNode *parents);

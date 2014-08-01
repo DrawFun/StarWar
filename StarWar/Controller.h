@@ -19,7 +19,7 @@ protected:
 	POINT m_lastMousePosition; //Last mouse position
 
 	D3DXVECTOR3	m_position;    // Position
-	D3DXVECTOR3 m_rotation; //Rotation
+	D3DXQUATERNION m_rotation; //Rotation
 	D3DXVECTOR3	m_look;  // Look Vector
 	D3DXVECTOR3	m_up;      // Up Vector
 	D3DXVECTOR3	m_right;   // Right Vector

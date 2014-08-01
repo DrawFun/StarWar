@@ -3,10 +3,11 @@
 void CPlatform::Update()
 {
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
+	pd3dDevice->SetTransform(D3DTS_WORLD, &this->GetTransform().GetWorldMatrix());	
 	if(m_moveCounter < PLATFORM_MOVE_FRAME_PERIOD)
 	{
-		m_transform.Yaw(m_rotationSpeed);
-		m_transform.Translate(D3DXVECTOR3(m_horizontalSpeed, 0.0f, m_horizontalSpeed));
+		//m_transform.Yaw(m_rotationSpeed);
+		//m_transform.Translate(D3DXVECTOR3(m_horizontalSpeed, 0.0f, m_horizontalSpeed));
 		++m_moveCounter;
 	}
 	else
@@ -15,7 +16,7 @@ void CPlatform::Update()
 		m_rotationSpeed = -m_rotationSpeed;
 		m_horizontalSpeed = -m_horizontalSpeed;
 	}
-	m_transform.UpdateMatrix();
+	//m_transform.UpdateMatrix();
     pd3dDevice->SetMaterial(&m_pMeshMaterials);
 	m_pMesh->DrawSubset(0);
 

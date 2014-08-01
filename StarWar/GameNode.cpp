@@ -23,21 +23,11 @@ void CGameNode::SetMoveSpeed(float speed)
 bool CGameNode::InitTransform(const CTransform &transform)
 {
 	m_transform = transform;
-	m_transform.UpdateMatrix();
+	//m_transform.UpdateMatrix();
 	return true;
 }
 
 CTransform& CGameNode::GetTransform()
 {
 	return m_transform;
-}
-
-CGameNode *CGameNode::GetParents()
-{
-	return m_parents;
-}
-
-void CGameNode::SetParents(CGameNode *parents)
-{
-	m_parents = parents;
 }

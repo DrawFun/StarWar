@@ -103,9 +103,11 @@ void CController::Control(const ControllerInput &input)
 	m_position = attemptPosition;
 	m_target->GetTransform().SetPosition(m_position);
 
-
-	m_rotation += D3DXVECTOR3(xAngle, yAngle, 0);
-	Util::Clip(-CAMERA_PITCH_LIMITATION, CAMERA_PITCH_LIMITATION, m_rotation.x);
+	D3DXQUATERNION qRotation; 
+	D3DXQuaternionRotationYawPitchRoll(&qRotation, yAngle, xAngle, 0); 
+	m_rotation = qRotation * m_rotation;
+	
+	//Util::Clip(-CAMERA_PITCH_LIMITATION, CAMERA_PITCH_LIMITATION, m_rotation.x);
 	m_target->GetTransform().SetRotation(m_rotation);
 
 	AdjustTransform();
@@ -119,12 +121,13 @@ void CController::AdjustTransform()
 	m_right = D3DXVECTOR3(1, 0, 0);
 	m_up = D3DXVECTOR3(0, 1, 0);
 
-	D3DXVECTOR3 rotation = m_target->GetTransform().GetRotation();
-	D3DXMatrixRotationX(&matrixRotationX, rotation.x); 
-	D3DXMatrixRotationY(&matrixRotationY, rotation.y); 
-	D3DXMatrixRotationZ(&matrixRotationZ, rotation.z); 
-	
-	matrixRotation = matrixRotationX * matrixRotationY *  matrixRotationZ;
+	D3DXQUATERNION rotation = m_target->GetTransform().GetRotation();
+	D3DXMatrixRotationQuaternion(&matrixRotation, &rotation);
+	//D3DXMatrixRotationX(&matrixRotationX, rotation.x); 
+	//D3DXMatrixRotationY(&matrixRotationY, rotation.y); 
+	//D3DXMatrixRotationZ(&matrixRotationZ, rotation.z); 
+	//
+	//matrixRotation = matrixRotationX * matrixRotationY *  matrixRotationZ;
 	
 	D3DXVec3TransformCoord(&m_look, &m_look, &matrixRotation);
 	D3DXVec3TransformCoord(&m_right, &m_right, &matrixRotation);

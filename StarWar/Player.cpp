@@ -10,8 +10,9 @@ CPlayer::CPlayer()
 void CPlayer::Update()
 {
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
-	
-	m_transform.UpdateMatrix();
+
+	pd3dDevice->SetTransform(D3DTS_WORLD, &this->GetTransform().GetWorldMatrix());		
+	//m_transform.UpdateMatrix();
     for( unsigned long i = 0; i < snowManNumMaterials; ++i )
     {
         pd3dDevice->SetMaterial(&pSnowmanMeshMaterials[i]);
@@ -84,8 +85,7 @@ void CPlayer::CollidingCallback(CGameNode *collided)
 		break;
 	case PLATFORM:
 		m_transform.Translate(D3DXVECTOR3(0, dynamic_cast<CPlatform *> (collided)->GetHeight(), 0));	
-		m_transform.SetParents(&collided->GetTransform());
-		m_parents = collided;		
+		m_transform.SetParents(&collided->GetTransform());	
 		break;
 	default:
 		break;

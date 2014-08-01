@@ -3,8 +3,8 @@
 void CZergTeleport::Update()
 {
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
-	
-	m_transform.UpdateMatrix();
+	pd3dDevice->SetTransform(D3DTS_WORLD, &this->GetTransform().GetWorldMatrix());		
+	//m_transform.UpdateMatrix();
     for( unsigned long i = 0; i < m_materialsNum; ++i )
     {
         pd3dDevice->SetMaterial(&m_pMeshMaterials[i]);

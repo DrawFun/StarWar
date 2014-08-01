@@ -1,33 +1,53 @@
 #include "Transform.h"
 
-void CTransform::UpdateMatrix()
+CTransform::~CTransform()
 {
-	if(m_parents != NULL)
+	//TODO 
+	if(m_pParents != NULL)
 	{
-		m_position += (m_parents->GetPosition() - m_lastParentsPosition);
-		m_rotation += (m_parents->GetRotation() - m_lastParentsRotation);
-		
-		m_lastParentsPosition = m_parents->GetPosition();
-		m_lastParentsRotation = m_parents->GetRotation();
-		m_lastParentsScale = m_parents->GetScale();
+		m_pParents->RemoveChild(this);
+		for(auto childTransform : m_pChildrenList)
+		{
+			childTransform->SetParents(NULL);
+		}
 	}
-	D3DXMATRIX matrixScale, matrixRotation, matrixTranslation, matrixWorld;
-	D3DXMatrixScaling(&matrixScale, m_scale.x, m_scale.y, m_scale.z);
-	D3DXMatrixRotationYawPitchRoll(&matrixRotation, m_rotation.y , m_rotation.x, m_rotation.z);
-	D3DXMatrixTranslation(&matrixTranslation, m_position.x, m_position.y, m_position.z);
-
-	matrixWorld = matrixScale * matrixRotation * matrixTranslation;
-
-	//Transform the world according the generated matrix
-	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
-	pd3dDevice->SetTransform(D3DTS_WORLD, &matrixWorld);	
 }
 
+void CTransform::UpdateMatrix()
+{
+	D3DXMATRIX matrixScale, matrixRotation, matrixTranslation;
+	D3DXMatrixScaling(&matrixScale, m_scale.x, m_scale.y, m_scale.z);
+	D3DXMatrixRotationQuaternion(&matrixRotation, &m_rotation);
+	//D3DXMatrixRotationYawPitchRoll(&matrixRotation, m_rotation.y , m_rotation.x, m_rotation.z);
+	D3DXMatrixTranslation(&matrixTranslation, m_position.x, m_position.y, m_position.z);
+
+	m_matrixWorld = matrixScale * matrixRotation * matrixTranslation;
+
+	if(m_pParents != NULL)
+	{
+		m_matrixWorld = m_pParents->GetWorldMatrix() * m_matrixWorld;
+		D3DXMatrixDecompose(&m_scale, &m_rotation, &m_position, &m_matrixWorld);		
+	}
+
+	for(auto childTransform : m_pChildrenList)
+	{
+		childTransform->UpdateMatrix();
+	}
+}
 
 void CTransform::SetParents(CTransform *parents)
 {
-	m_parents = parents; 
-	m_lastParentsPosition = parents->GetPosition();
-	m_lastParentsRotation = parents->GetRotation();
-	m_lastParentsScale = parents->GetScale();
+	m_pParents = parents; 
 }
+
+void CTransform::AddChild(CTransform *child)
+{
+	m_pChildrenList.push_back(child);
+	child->SetParents(this);
+}
+	
+void CTransform::RemoveChild(CTransform *child)
+{
+	m_pChildrenList.remove(child);
+	child->SetParents(NULL);
+};

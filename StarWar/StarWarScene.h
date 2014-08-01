@@ -41,6 +41,8 @@ private:
 	std::list<CMissile*> m_listMissile;
 
 	CController *m_pController;
+
+	CTransform rootNode;
 	
 protected:
 	std::list<CGameNode*> m_listRootGameNodes;
