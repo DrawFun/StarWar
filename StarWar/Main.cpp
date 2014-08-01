@@ -13,15 +13,9 @@
 //------------------------------------------------------------------------------
 
 #include "Util.h"
-#include "SkyBox.h"
-#include "Terrain.h"
-#include "Camera.h"
 #include "DXEngine.h"
-#include "Player.h"
-#include "Mine.h"
-#include "Platform.h"
-#include "Controller.h"
-#include "Transform.h"
+#include "StarWarScene.h"
+
 
 //------------------------------------------------------------------------------
 // GLOBALS VARIABLES
@@ -30,17 +24,7 @@ HWND                    g_hWnd           = NULL;
 LPDIRECT3D9             g_pD3D           = NULL;
 LPDIRECT3DDEVICE9       g_pd3dDevice     = NULL;
 
-//Skybox pointer
-CSkyBox *pCSkyBox = NULL;
-//Terrain pointer
-CTerrain *pCTerrain = NULL;
-
-CCamera *camera = NULL;
-CDXEngine  *dxEngine = NULL;
-CPlayer *player = NULL;
-CPlatform *platform = NULL;
-CMine *mine = NULL;
-CController *controller = NULL;
+CStarWarScene *pStarWarScene = NULL;
 
 //Controler related variables 
 POINT g_ptLastMousePosit; //Last mouse position
@@ -102,43 +86,6 @@ int WINAPI WinMain(	HINSTANCE hInstance,
     ShowWindow( g_hWnd, nCmdShow );
     UpdateWindow( g_hWnd );
 	
-
-
-	//Init D3D device pointer
-	dxEngine = CDXEngine::Instance(g_hWnd);
-	g_pD3D = dxEngine->GetDx();
-	g_pd3dDevice = dxEngine->GetDxDevice();
-
-	pCSkyBox = new CSkyBox();
-	pCSkyBox->InitVertices();
-	pCSkyBox->InitColliders();
-
-	//Construct terrain
-	pCTerrain = new CTerrain(300, 300, -150, -150, 2, -2, 2);
-	pCTerrain->InitVertices();
-
-	platform = new CPlatform(20, 1, 20);
-	CTransform platformTramsform(D3DXVECTOR3(-25.0f, 0.0f, -25.0f));
-	platform->InitTransform(platformTramsform);
-	platform->InitVertices();
-	platform->InitColliders();
-
-	player = new CPlayer();
-	CTransform playerTramsform(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.05,0.05,0.05));
-	player->InitTransform(playerTramsform);	
-	player->InitVertices();	
-	player->InitColliders();
-	
-	mine = new CMine(0.01);
-	CTransform mineTramsform(D3DXVECTOR3(5,0,5), D3DXVECTOR3(0.05,0.05,0.05));
-	mine->InitTransform(mineTramsform);
-	mine->InitVertices();	
-	mine->InitColliders();
-	
-	camera = new CCamera(player, D3DXVECTOR3(0, 0, -15));
-
-	controller = new CController(player);
-
 	//Init D3D related resource here
 	init();
 
@@ -242,6 +189,9 @@ LRESULT CALLBACK WindowProc( HWND   hWnd,
 //------------------------------------------------------------------------------
 void init( void )
 {
+	CDXEngine::Instance(g_hWnd);
+		g_pD3D = CDXEngine::Instance()->GetDx();
+	g_pd3dDevice = CDXEngine::Instance()->GetDxDevice();
 	//Set samplers
 	g_pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	g_pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
@@ -255,8 +205,10 @@ void init( void )
     g_pd3dDevice->SetTransform( D3DTS_PROJECTION, &matProj );
 
 	//Full of white light
-	    g_pd3dDevice->SetRenderState(D3DRS_AMBIENT, 
+	g_pd3dDevice->SetRenderState(D3DRS_AMBIENT, 
 		0xffffffff);
+
+	pStarWarScene = new CStarWarScene();
 }
 
 //------------------------------------------------------------------------------
@@ -267,9 +219,6 @@ void shutDown( void )
 {
 
 	CDXEngine::Destroy();
-
-	delete pCSkyBox;
-	delete pCTerrain;
 }
 
 //------------------------------------------------------------------------------
@@ -278,7 +227,6 @@ void shutDown( void )
 //------------------------------------------------------------------------------
 void render( void )
 {
-
 
 	//Clear to the background
     g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
@@ -300,35 +248,18 @@ void render( void )
 	input.currentMousePosition = mousePosit;
 	GetKeyboardState(input.keys);
 
-	controller->Control(input);
-	
 	//updateViewMatrix();
 
 	//Draw skybox, terrain and snowman
     g_pd3dDevice->BeginScene();	
-
+	pStarWarScene->Update(input);
 
 	//Init and set world matrix
 	D3DXMATRIX matWorld;
 	D3DXMatrixScaling(&matWorld, 1.0f, 1.0f, 1.0f);
     g_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
 
-	//Draw skybox
-	pCSkyBox->Update();
-	//Draw terrain
-	pCTerrain->Update();
-
 	
-	platform->Update();	
-	
-
-	mine->Update();
-	player->Update();
-
-
-
-	camera->LateUpdate();
-
 
     g_pd3dDevice->EndScene();
     g_pd3dDevice->Present( NULL, NULL, NULL, NULL );

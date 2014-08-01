@@ -2,6 +2,7 @@
 #define _STARWAR_SKYBOX_H_
 
 #include "GameNode.h"
+#include "Camera.h"
 
 //Define SkyBoxVertex
 typedef PositionNormalDiffUseColorTexVertex SkyBoxVertex;
@@ -28,6 +29,8 @@ protected:
 	//Point to mesh material
 	D3DMATERIAL9 m_pMeshMaterials; 
 
+	CCamera *m_pCamera;
+
 public:
 	//Constructor.
 	CSkyBox();
@@ -40,6 +43,7 @@ public:
 	bool InitColliders(){return true;};
 	void CollidingCallback(CGameNode *collided){};
 	void CollidedCallback(CGameNode *colliding){};
+	void SetCamera(CCamera *pCamera){m_pCamera = pCamera;};
 };
 
 #endif

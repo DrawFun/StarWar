@@ -10,7 +10,7 @@ class CScene
 protected:
 	std::list<CGameNode *> m_objectsList;
 public:
-
+	virtual void Update() = 0;
 };
 
 #endif

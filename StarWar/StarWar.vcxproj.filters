@@ -54,6 +54,21 @@
     <ClCompile Include="Transform.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Airplane.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Zerg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ZergTeleport.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Missile.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="StarWarScene.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SkyBox.h">
@@ -96,6 +111,21 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Transform.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="StarWarScene.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Airplane.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Zerg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ZergTeleport.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Missile.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

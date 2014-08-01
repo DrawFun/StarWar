@@ -2,8 +2,8 @@
 #include "Mine.h"
 #include "Platform.h"
 
-extern CMine *mine;
-extern CPlatform *platform;
+//extern CMine *mine;
+//extern CPlatform *platform;
 
 CController::CController(CGameNode *target)
 {
@@ -78,25 +78,31 @@ void CController::Control(const ControllerInput &input)
 		attemptPosition += (m_right * moveSpeed) * input.elpasedTime;
 	Util::Clip(0, 2048, attemptPosition.y);
 
-	if(Collider::IsCollision(m_target->GetCollider(), mine->GetCollider(), attemptPosition, mine->GetTransform().GetPosition()))
-	{		
-		m_target->CollidingCallback(mine);
-		mine->CollidedCallback(m_target);
-		//m_position = m_target->GetPosition();
-	}
-	else if(Collider::IsCollision(m_target->GetCollider(), platform->GetCollider(), attemptPosition, platform->GetTransform().GetPosition()))
-	{
-		if(m_target->GetParents() != platform)
-		{
-			m_target->CollidingCallback(platform);
-			platform->CollidedCallback(m_target);
-		}
-	}
-	else
-	{
-		m_position = attemptPosition;
-		m_target->GetTransform().SetPosition(m_position);		
-	}
+	//if(Collider::IsCollision(m_target->GetCollider(), mine->GetCollider(), attemptPosition, mine->GetTransform().GetPosition()))
+	//{		
+	//	m_target->CollidingCallback(mine);
+	//	mine->CollidedCallback(m_target);
+	//	//m_position = m_target->GetPosition();
+	//}
+	//else if(Collider::IsCollision(m_target->GetCollider(), platform->GetCollider(), attemptPosition, platform->GetTransform().GetPosition()))
+	//{
+	//	if(m_target->GetParents() != platform)
+	//	{
+	//		m_target->CollidingCallback(platform);
+	//		platform->CollidedCallback(m_target);
+	//	}
+	//}
+	//else
+	//{
+	//	m_position = attemptPosition;
+	//	m_target->GetTransform().SetPosition(m_position);		
+	//}
+
+
+	//DELETE
+	m_position = attemptPosition;
+	m_target->GetTransform().SetPosition(m_position);
+
 
 	m_rotation += D3DXVECTOR3(xAngle, yAngle, 0);
 	Util::Clip(-CAMERA_PITCH_LIMITATION, CAMERA_PITCH_LIMITATION, m_rotation.x);

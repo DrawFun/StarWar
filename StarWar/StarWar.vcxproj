@@ -69,35 +69,45 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Airplane.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Controller.cpp" />
     <ClCompile Include="DXEngine.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mine.cpp" />
     <ClCompile Include="GameNode.cpp" />
+    <ClCompile Include="Missile.cpp" />
     <ClCompile Include="Platform.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SkyBox.cpp" />
+    <ClCompile Include="StarWarScene.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="Zerg.cpp" />
+    <ClCompile Include="ZergTeleport.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Airplane.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="DXEngine.h" />
     <ClInclude Include="Mine.h" />
     <ClInclude Include="GameNode.h" />
+    <ClInclude Include="Missile.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SkyBox.h" />
+    <ClInclude Include="StarWarScene.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Util.h" />
+    <ClInclude Include="Zerg.h" />
+    <ClInclude Include="ZergTeleport.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resource\alpine_back.jpg" />

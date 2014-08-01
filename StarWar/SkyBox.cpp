@@ -2,10 +2,6 @@
 #include "Camera.h"
 #include "Player.h"
 
-//TODO
-extern CCamera *camera;
-extern CPlayer *player;
-
 //------------------------------------------------------------------------------
 // Name: CSkyBox::CSkyBox(const LPCSTR (&pImageFileNameArray)[TOTAL_SIDES], LPDIRECT3DDEVICE9 g_pd3dDevice)
 // Desc: Skybox constructor. 
@@ -154,7 +150,7 @@ void CSkyBox::Update()
 {
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
 
-	m_transform.SetPosition(camera->GetPosition());
+	m_transform.SetPosition(m_pCamera->GetPosition());
 	m_transform.UpdateMatrix();
 
 	//Disable z-depth buffer.
