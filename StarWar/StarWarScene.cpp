@@ -10,8 +10,8 @@ CStarWarScene::CStarWarScene()
 	CTransform playerTramsform(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.05,0.05,0.05));
 	m_pPlayer->InitTransform(playerTramsform);	
 
-	//rootNode.AddChild(&m_pSkyBox->GetTransform());
-	//rootNode.AddChild(&m_pTerrain->GetTransform());
+	rootNode.AddChild(&m_pSkyBox->GetTransform());
+	rootNode.AddChild(&m_pTerrain->GetTransform());
 	rootNode.AddChild(&m_pPlayer->GetTransform());
 
 	m_listRootGameNodes.push_back(m_pSkyBox);
@@ -40,7 +40,7 @@ CStarWarScene::CStarWarScene()
 	{
 		m_pArrayMine[i] = new CMine(0.01f); 
 		m_pArrayMine[i]->InitTransform(mineTramsforms[i]);
-		rootNode.AddChild(&m_pArrayMine[i]->GetTransform());
+		m_pArrayPlatform[i]->GetTransform().AddChild(&m_pArrayMine[i]->GetTransform());
 		m_listRootGameNodes.push_back(m_pArrayMine[i]);
 	}
 
@@ -80,7 +80,7 @@ CStarWarScene::CStarWarScene()
 void CStarWarScene::Update(ControllerInput &input)
 {
 	m_pController->Control(input);
-
+	
 	rootNode.UpdateMatrix();
 
 	for(auto gameNode : m_listRootGameNodes)

@@ -35,7 +35,7 @@ void CMine::Update()
 bool CMine::InitVertices()
 {			
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
-
+	
 	//Init snowman x model
 	LPD3DXBUFFER pD3DXMtrlBuffer;
 

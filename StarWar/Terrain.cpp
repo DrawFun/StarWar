@@ -270,6 +270,7 @@ void CTerrain::Update(void)
 {
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
 	m_transform.UpdateMatrix();
+	pd3dDevice->SetTransform(D3DTS_WORLD, &this->GetTransform().GetWorldMatrix());
 	//Set the textures to be used
 	pd3dDevice->SetTexture(0,m_pTexture);
 	//Set the vector FVF format

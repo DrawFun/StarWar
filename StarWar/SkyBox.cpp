@@ -152,7 +152,7 @@ void CSkyBox::Update()
 
 	m_transform.SetPosition(m_pCamera->GetPosition());
 	m_transform.UpdateMatrix();
-
+	pd3dDevice->SetTransform(D3DTS_WORLD, &this->GetTransform().GetWorldMatrix());
 	//Disable z-depth buffer.
 	pd3dDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
 	//Set SkyBoxVertex FVF type.
