@@ -1,7 +1,7 @@
 #ifndef _STARWAR_TERRAIN_H_
 #define _STARWAR_TERRAIN_H_
 
-#include "DXEngine.h"
+#include "GameNode.h"
 
 //Define TerrainVertex
 typedef PositionNormalSpecularColorTexVertex TerrainVertex;
@@ -11,7 +11,7 @@ typedef PositionNormalSpecularColorTexVertex TerrainVertex;
 // Desc: The class of terrain
 //------------------------------------------------------------------------------
 
-class CTerrain
+class CTerrain : public CGameNode
 {
 private:
 	//Number of vertex in x-axis. Use as length of terrain. 
@@ -34,6 +34,8 @@ private:
 	TerrainVertex *m_pVertexArray;
 	//Storage buffer for indices.
 	int *m_pIndices;
+	//Point to mesh material
+	D3DMATERIAL9 m_pMeshMaterials; 
 	//Point to the texture.
 	LPDIRECT3DTEXTURE9 m_pTexture;
 
@@ -45,10 +47,11 @@ public:
 	~CTerrain();
 	//Update the terrain.
 	void Update();	
-	//Get the map constraint.
-	void GetSpaceConstraint(float &x1, float &x2, float &z1, float &z2);
 	//Create vertex buffer.
 	bool InitVertices();
+	bool InitColliders(){return true;};
+	void CollidingCallback(CGameNode *collided){};
+	void CollidedCallback(CGameNode *colliding){};
 
 private:
 	//Create indices buffer with corresponding vertex id.

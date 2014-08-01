@@ -50,8 +50,8 @@ bool CSkyBox::InitVertices(void)
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
 
 	LPCSTR pImageFileNameArray[TOTAL_SIDES] = {
-		"Resource//alpine_front.jpg", "Resource//alpine_back.jpg", "Resource//alpine_left.jpg",
-		"Resource//alpine_right.jpg", "Resource//alpine_top.jpg", "Resource//SnowTerrain.jpg"
+		"Resource//skybox_front.jpg", "Resource//skybox_back.jpg", "Resource//skybox_left.jpg",
+		"Resource//skybox_right.jpg", "Resource//skybox_top.jpg", "Resource//skybox_top.jpg"
 	};
 
 	//Allocate memory for vertices constructing skybox
@@ -62,40 +62,40 @@ bool CSkyBox::InitVertices(void)
 	//Init the position, normal, color and texture position.
 
 	//Front
-	m_pVertexArray[0] = SkyBoxVertex(-30.0f, -30.0f, 30.0f, 0, 0, -1, 0xffffff00, 0.0f, 1.0f);
-	m_pVertexArray[1] = SkyBoxVertex(-30.0f,  30.0f, 30.0f, 0, 0, -1, 0xffffff00, 0.0f, 0.0f);
-	m_pVertexArray[2] = SkyBoxVertex( 30.0f, -30.0f, 30.0f, 0, 0, -1, 0xffffff00, 1.0f, 1.0f);
-	m_pVertexArray[3] = SkyBoxVertex( 30.0f,  30.0f, 30.0f, 0, 0, -1, 0xffffff00, 1.0f, 0.0f);
+	m_pVertexArray[0] = SkyBoxVertex(-5.0f, -5.0f, 5.0f, 0, 0, -1, 0xffffff00, 0.0f, 1.0f);
+	m_pVertexArray[1] = SkyBoxVertex(-5.0f,  5.0f, 5.0f, 0, 0, -1, 0xffffff00, 0.0f, 0.0f);
+	m_pVertexArray[2] = SkyBoxVertex( 5.0f, -5.0f, 5.0f, 0, 0, -1, 0xffffff00, 1.0f, 1.0f);
+	m_pVertexArray[3] = SkyBoxVertex( 5.0f,  5.0f, 5.0f, 0, 0, -1, 0xffffff00, 1.0f, 0.0f);
 
 	//Back
-	m_pVertexArray[4] = SkyBoxVertex( 30.0f, -30.0f, -30.0f, 0, 0, 1, 0xffffff00, 0.0f, 1.0f);
-	m_pVertexArray[5] = SkyBoxVertex( 30.0f,  30.0f, -30.0f, 0, 0, 1, 0xffffff00, 0.0f, 0.0f);
-	m_pVertexArray[6] = SkyBoxVertex(-30.0f, -30.0f, -30.0f, 0, 0, 1, 0xffffff00, 1.0f, 1.0f);
-	m_pVertexArray[7] = SkyBoxVertex(-30.0f,  30.0f, -30.0f, 0, 0, 1, 0xffffff00, 1.0f, 0.0f);
+	m_pVertexArray[4] = SkyBoxVertex( 5.0f, -5.0f, -5.0f, 0, 0, 1, 0xffffff00, 0.0f, 1.0f);
+	m_pVertexArray[5] = SkyBoxVertex( 5.0f,  5.0f, -5.0f, 0, 0, 1, 0xffffff00, 0.0f, 0.0f);
+	m_pVertexArray[6] = SkyBoxVertex(-5.0f, -5.0f, -5.0f, 0, 0, 1, 0xffffff00, 1.0f, 1.0f);
+	m_pVertexArray[7] = SkyBoxVertex(-5.0f,  5.0f, -5.0f, 0, 0, 1, 0xffffff00, 1.0f, 0.0f);
 
 	//Left
-	m_pVertexArray[8]  = SkyBoxVertex(-30.0f, -30.0f, -30.0f, 1, 0, 0, 0xffffff00, 0.0f, 1.0f);
-	m_pVertexArray[9]  = SkyBoxVertex(-30.0f,  30.0f, -30.0f, 1, 0, 0, 0xffffff00, 0.0f, 0.0f);
-	m_pVertexArray[10] = SkyBoxVertex(-30.0f, -30.0f,  30.0f, 1, 0, 0, 0xffffff00, 1.0f, 1.0f);
-	m_pVertexArray[11] = SkyBoxVertex(-30.0f,  30.0f,  30.0f, 1, 0, 0, 0xffffff00, 1.0f, 0.0f);
+	m_pVertexArray[8]  = SkyBoxVertex(-5.0f, -5.0f, -5.0f, 1, 0, 0, 0xffffff00, 0.0f, 1.0f);
+	m_pVertexArray[9]  = SkyBoxVertex(-5.0f,  5.0f, -5.0f, 1, 0, 0, 0xffffff00, 0.0f, 0.0f);
+	m_pVertexArray[10] = SkyBoxVertex(-5.0f, -5.0f,  5.0f, 1, 0, 0, 0xffffff00, 1.0f, 1.0f);
+	m_pVertexArray[11] = SkyBoxVertex(-5.0f,  5.0f,  5.0f, 1, 0, 0, 0xffffff00, 1.0f, 0.0f);
 
 	//Right
-	m_pVertexArray[12] = SkyBoxVertex( 30.0f, -30.0f,  30.0f, -1, 0, 0, 0xffffff00, 0.0f, 1.0f);
-	m_pVertexArray[13] = SkyBoxVertex( 30.0f,  30.0f,  30.0f, -1, 0, 0, 0xffffff00, 0.0f, 0.0f);
-	m_pVertexArray[14] = SkyBoxVertex( 30.0f, -30.0f, -30.0f, -1, 0, 0, 0xffffff00, 1.0f, 1.0f);
-	m_pVertexArray[15] = SkyBoxVertex( 30.0f,  30.0f, -30.0f, -1, 0, 0, 0xffffff00, 1.0f, 0.0f);
+	m_pVertexArray[12] = SkyBoxVertex( 5.0f, -5.0f,  5.0f, -1, 0, 0, 0xffffff00, 0.0f, 1.0f);
+	m_pVertexArray[13] = SkyBoxVertex( 5.0f,  5.0f,  5.0f, -1, 0, 0, 0xffffff00, 0.0f, 0.0f);
+	m_pVertexArray[14] = SkyBoxVertex( 5.0f, -5.0f, -5.0f, -1, 0, 0, 0xffffff00, 1.0f, 1.0f);
+	m_pVertexArray[15] = SkyBoxVertex( 5.0f,  5.0f, -5.0f, -1, 0, 0, 0xffffff00, 1.0f, 0.0f);
 
 	//Ceiling
-	m_pVertexArray[16] = SkyBoxVertex(-30.0f,  30.0f,  30.0f, 0, -1, 0, 0xffffff00, 0.0f, 1.0f);
-	m_pVertexArray[17] = SkyBoxVertex(-30.0f,  30.0f, -30.0f, 0, -1, 0, 0xffffff00, 0.0f, 0.0f);
-	m_pVertexArray[18] = SkyBoxVertex( 30.0f,  30.0f,  30.0f, 0, -1, 0, 0xffffff00, 1.0f, 1.0f);
-	m_pVertexArray[19] = SkyBoxVertex( 30.0f,  30.0f, -30.0f, 0, -1, 0, 0xffffff00, 1.0f, 0.0f);
+	m_pVertexArray[16] = SkyBoxVertex(-5.0f,  5.0f,  5.0f, 0, -1, 0, 0xffffff00, 0.0f, 1.0f);
+	m_pVertexArray[17] = SkyBoxVertex(-5.0f,  5.0f, -5.0f, 0, -1, 0, 0xffffff00, 0.0f, 0.0f);
+	m_pVertexArray[18] = SkyBoxVertex( 5.0f,  5.0f,  5.0f, 0, -1, 0, 0xffffff00, 1.0f, 1.0f);
+	m_pVertexArray[19] = SkyBoxVertex( 5.0f,  5.0f, -5.0f, 0, -1, 0, 0xffffff00, 1.0f, 0.0f);
 
 	//Floor
-	m_pVertexArray[20] = SkyBoxVertex(-30.0f, -30.0f, -30.0f, 0, 1, 0, 0xffffff00, 0.0f, 1.0f);
-	m_pVertexArray[21] = SkyBoxVertex(-30.0f, -30.0f,  30.0f, 0, 1, 0, 0xffffff00, 0.0f, 0.0f);
-	m_pVertexArray[22] = SkyBoxVertex( 30.0f, -30.0f, -30.0f, 0, 1, 0, 0xffffff00, 1.0f, 1.0f);
-	m_pVertexArray[23] = SkyBoxVertex( 30.0f, -30.0f,  30.0f, 0, 1, 0, 0xffffff00, 1.0f, 0.0f);
+	m_pVertexArray[20] = SkyBoxVertex(-5.0f, -5.0f, -5.0f, 0, 1, 0, 0xffffff00, 0.0f, 1.0f);
+	m_pVertexArray[21] = SkyBoxVertex(-5.0f, -5.0f,  5.0f, 0, 1, 0, 0xffffff00, 0.0f, 0.0f);
+	m_pVertexArray[22] = SkyBoxVertex( 5.0f, -5.0f, -5.0f, 0, 1, 0, 0xffffff00, 1.0f, 1.0f);
+	m_pVertexArray[23] = SkyBoxVertex( 5.0f, -5.0f,  5.0f, 0, 1, 0, 0xffffff00, 1.0f, 0.0f);
 
 	// Create corresponding vertex buffer in D3D. 
     HRESULT hRet = pd3dDevice->CreateVertexBuffer(sizeof(SkyBoxVertex) * TOTAL_VERTICES, //Buffer size
@@ -117,6 +117,16 @@ bool CSkyBox::InitVertices(void)
 	m_pVertexBuffer->Lock(0, sizeof(SkyBoxVertex) * TOTAL_VERTICES, (void**)&pVertices, 0);
     memcpy(pVertices, m_pVertexArray, sizeof(SkyBoxVertex) * TOTAL_VERTICES);
     m_pVertexBuffer->Unlock();
+
+	ZeroMemory(&m_pMeshMaterials, sizeof(D3DMATERIAL9));
+	m_pMeshMaterials.Diffuse.r = 1;
+	m_pMeshMaterials.Diffuse.g = 1;
+	m_pMeshMaterials.Diffuse.b = 1;
+	m_pMeshMaterials.Diffuse.a = 1;
+	m_pMeshMaterials.Ambient.r = 1;
+	m_pMeshMaterials.Ambient.g = 1;
+	m_pMeshMaterials.Ambient.b = 1;
+	m_pMeshMaterials.Ambient.a = 1;
 
 	//Load textures from files. 
 	hRet = D3DXCreateTextureFromFile(pd3dDevice, pImageFileNameArray[FRONT], &m_pTextureArray[FRONT]);
@@ -153,6 +163,8 @@ void CSkyBox::Update()
 	pd3dDevice->SetFVF( SkyBoxVertex::FVF );
 	//Binding the vertex buffer to D3D device data stream
     pd3dDevice->SetStreamSource(0, m_pVertexBuffer, 0, sizeof(SkyBoxVertex));
+
+	pd3dDevice->SetMaterial(&m_pMeshMaterials);
 
 	//Draw skybox side by side
 	for (int i = 0; i < TOTAL_SIDES; ++i)

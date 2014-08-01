@@ -37,13 +37,16 @@ void CCamera::UpdateViewMatrix()
 
 	D3DXMatrixRotationY(&matrixRotationY, rotation.y); 
 
-	D3DXVECTOR3 m_offsetPosition1 = m_offsetPosition;   
+	D3DXMatrixRotationZ(&matrixRotationZ, rotation.z); 
 	
-	matrixRotation = matrixRotationX * matrixRotationY;
+	D3DXVECTOR3 m_offsetPosition1 = m_offsetPosition;   
+	D3DXVec3Normalize( &m_offsetPosition1, &m_offsetPosition1 );
+	matrixRotation = matrixRotationX * matrixRotationY * matrixRotationZ;
 	
 	//D3DXVec3TransformCoord(&m_look, &m_look, &matrixRotation);
 	//D3DXVec3TransformCoord(&m_right, &m_right, &matrixRotation);
 	D3DXVec3TransformCoord(&m_offsetPosition1, &m_offsetPosition1, &matrixRotation);
+	D3DXVec3TransformCoord(&m_up, &m_up, &matrixRotation);
 
 	D3DXVec3Normalize( &m_offsetPosition1, &m_offsetPosition1 );
 

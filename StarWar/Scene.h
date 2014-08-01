@@ -8,6 +8,8 @@
 class CScene
 {
 protected:
+	std::list<CGameNode *> m_objectsList;
+public:
 
 };
 

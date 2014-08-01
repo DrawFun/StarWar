@@ -12,21 +12,6 @@ void CPlayer::Update()
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
 	
 	m_transform.UpdateMatrix();
-
-	//Set texture on stage 0
-	pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	//Set RGB mix method
-	pd3dDevice->SetTextureStageState(0, D3DTSS_TEXCOORDINDEX, 0);
-	pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP,   D3DTOP_MODULATE);
-	
-	//Set texture on stage 1
-	pd3dDevice->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	pd3dDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	//Set RGB mix method
-	pd3dDevice->SetTextureStageState(1, D3DTSS_TEXCOORDINDEX, 1);
-	pd3dDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
-
     for( unsigned long i = 0; i < snowManNumMaterials; ++i )
     {
         pd3dDevice->SetMaterial(&pSnowmanMeshMaterials[i]);

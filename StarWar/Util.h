@@ -15,7 +15,7 @@
 #include <conio.h>
 #include <vector>
 
-const float CAMERA_PITCH_LIMITATION = 0.3f;
+const float CAMERA_PITCH_LIMITATION = 0.5f;
 enum GameNodeType{HUMAN, MINE, ZERG, ZERG_TELEPORT, AIRPLANE, PLATFORM};
 
 //Vertex containing position, normal and texture.

@@ -53,13 +53,13 @@ bool CTerrain::LoadHeightRaw(const LPCSTR pHeightRawFileName, LPDIRECT3DDEVICE9 
 		m_pHeightData = (char*)malloc(m_sizeX * m_sizeZ * sizeof(char));
 		memset(m_pHeightData, 0, m_sizeX * m_sizeZ * sizeof(char));
 		//Read data from file.
-		inFile.read(m_pHeightData, m_sizeX * m_sizeZ);
-		inFile.close();
+		//inFile.read(m_pHeightData, m_sizeX * m_sizeZ);
+		//inFile.close();
 		//Re-generate raw data according to height limit and base offset.
 		for(int i = 0; i < m_sizeX * m_sizeZ; ++i)
 		{
 
-			m_pHeightData[i] %= m_heightLimit;
+			//m_pHeightData[i] %= m_heightLimit;
 			m_pHeightData[i] += m_heightBase;
 		}
 		return true;
@@ -142,6 +142,15 @@ bool CTerrain::InitVertices(void)
 		InitIndices();
 		//Init normal of each vertex in terrain for specular light effect. 		
 		InitNormal();
+		ZeroMemory(&m_pMeshMaterials, sizeof(D3DMATERIAL9));
+		m_pMeshMaterials.Diffuse.r = 1;
+		m_pMeshMaterials.Diffuse.g = 1;
+		m_pMeshMaterials.Diffuse.b = 1;
+		m_pMeshMaterials.Diffuse.a = 1;
+		m_pMeshMaterials.Ambient.r = 1;
+		m_pMeshMaterials.Ambient.g = 1;
+		m_pMeshMaterials.Ambient.b = 1;
+		m_pMeshMaterials.Ambient.a = 1;
 		return true;
 	}
 	else
@@ -260,11 +269,12 @@ void CTerrain::InitNormal(void)
 void CTerrain::Update(void)
 {
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
-
+	m_transform.UpdateMatrix();
 	//Set the textures to be used
 	pd3dDevice->SetTexture(0,m_pTexture);
 	//Set the vector FVF format
 	pd3dDevice->SetFVF(TerrainVertex::FVF);
+	pd3dDevice->SetMaterial(&m_pMeshMaterials);
 	//Draw terrain
 	pd3dDevice->DrawIndexedPrimitiveUP
 		(D3DPT_TRIANGLELIST,  //Primitive type
@@ -275,12 +285,4 @@ void CTerrain::Update(void)
 		D3DFMT_INDEX32,  //Index data format
 		&m_pVertexArray[0], //Vertex starting address
 		sizeof(TerrainVertex)); //Vertex size
-}
-
-void CTerrain::GetSpaceConstraint(float &x1, float &x2, float &z1, float &z2)
-{
-	x1 = m_pVertexArray[0]._x + 30.0f;
-	z1 = m_pVertexArray[0]._z + 30.0f;
-	x2 = m_pVertexArray[m_sizeX * m_sizeZ - 1]._x - 30.0f;
-	z2 = m_pVertexArray[m_sizeX * m_sizeZ - 1]._z - 30.0f;
 }

@@ -76,6 +76,7 @@ void CController::Control(const ControllerInput &input)
 	// Right Arrow Key - View side-steps or strafes to the right
 	if( input.keys['D'] & 0x80 )
 		attemptPosition += (m_right * moveSpeed) * input.elpasedTime;
+	Util::Clip(0, 2048, attemptPosition.y);
 
 	if(Collider::IsCollision(m_target->GetCollider(), mine->GetCollider(), attemptPosition, mine->GetTransform().GetPosition()))
 	{		

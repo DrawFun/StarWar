@@ -25,6 +25,8 @@ protected:
 	SkyBoxVertex *m_pVertexArray;
 	//Vertices buffer
 	LPDIRECT3DVERTEXBUFFER9 m_pVertexBuffer;
+	//Point to mesh material
+	D3DMATERIAL9 m_pMeshMaterials; 
 
 public:
 	//Constructor.

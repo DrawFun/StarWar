@@ -114,29 +114,28 @@ int WINAPI WinMain(	HINSTANCE hInstance,
 	pCSkyBox->InitColliders();
 
 	//Construct terrain
-	pCTerrain = new CTerrain(64, 64, -128, -128, 2, 0, 8);
+	pCTerrain = new CTerrain(300, 300, -150, -150, 2, -2, 2);
 	pCTerrain->InitVertices();
 
-	platform = new CPlatform(10, 2, 10);
-	CTransform platformTramsform(D3DXVECTOR3(25.0f, -30.0f, 25.0f));
+	platform = new CPlatform(20, 1, 20);
+	CTransform platformTramsform(D3DXVECTOR3(-25.0f, 0.0f, -25.0f));
 	platform->InitTransform(platformTramsform);
 	platform->InitVertices();
 	platform->InitColliders();
 
 	player = new CPlayer();
-	CTransform playerTramsform(D3DXVECTOR3(0.0f, -30.0f, 0.0f), D3DXVECTOR3(0.05,0.05,0.05));
+	CTransform playerTramsform(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.05,0.05,0.05));
 	player->InitTransform(playerTramsform);	
 	player->InitVertices();	
 	player->InitColliders();
 	
 	mine = new CMine(0.01);
-	CTransform mineTramsform(D3DXVECTOR3(0.0f, -30.0f, 0.0f) + D3DXVECTOR3(5,0,5), D3DXVECTOR3(0.05,0.05,0.05));
+	CTransform mineTramsform(D3DXVECTOR3(5,0,5), D3DXVECTOR3(0.05,0.05,0.05));
 	mine->InitTransform(mineTramsform);
 	mine->InitVertices();	
 	mine->InitColliders();
 	
-
-	camera = new CCamera(player, D3DXVECTOR3(0, -15, -15));
+	camera = new CCamera(player, D3DXVECTOR3(0, 0, -15));
 
 	controller = new CController(player);
 
@@ -255,8 +254,6 @@ void init( void )
                                 1280.0f / 900.0f, 0.1f, 200.0f );
     g_pd3dDevice->SetTransform( D3DTS_PROJECTION, &matProj );
 
-	//Enable the lighting render
-	g_pd3dDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
 	//Full of white light
 	    g_pd3dDevice->SetRenderState(D3DRS_AMBIENT, 
 		0xffffffff);
@@ -318,9 +315,9 @@ void render( void )
 
 	//Draw skybox
 	pCSkyBox->Update();
-
 	//Draw terrain
-	//pCTerrain->Update();
+	pCTerrain->Update();
+
 	
 	platform->Update();	
 	
