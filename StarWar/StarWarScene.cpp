@@ -21,7 +21,7 @@ CStarWarScene::CStarWarScene()
 
 	for(int i = 0; i < PLATFORM_NUM; ++i)
 	{
-		m_pArrayPlatform[i] = new CPlatform(20.0f, 1.0f, 20.0f);
+		m_pArrayPlatform[i] = new CPlatform(20.0f, 1.0f, 20.0f, 0.02f, 0.005f);
 		m_pArrayPlatform[i]->InitTransform(platformTramsforms[i]);
 		m_listRootGameNodes.push_back(m_pArrayPlatform[i]);
 	}
@@ -79,4 +79,9 @@ void CStarWarScene::Update(ControllerInput &input)
 	}
 
 	m_pMainCamera->LateUpdate();
+}
+
+void UpdatePhysics()
+{
+	
 }

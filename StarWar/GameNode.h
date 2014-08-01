@@ -3,6 +3,7 @@
 
 #include "Transform.h"
 #include "Collider.h"
+#include <list>
 
 class CGameNode
 {
@@ -13,6 +14,7 @@ protected:
 	GameNodeType m_type;
 	float m_moveSpeed;
 	CGameNode *m_parents;
+	std::list<CGameNode *> m_children;
 
 public:		
 	bool InitTransform(const CTransform &transform);

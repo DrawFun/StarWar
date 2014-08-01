@@ -29,7 +29,7 @@ public:
 	void Control(const ControllerInput &input);
 
 private:
-	void AdjustTrasform();
+	void AdjustTransform();
 };
 
 #endif

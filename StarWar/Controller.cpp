@@ -12,7 +12,7 @@ CController::CController(CGameNode *target)
 	m_position = target->GetTransform().GetPosition();
 	m_rotation = target->GetTransform().GetRotation();
 
-	AdjustTrasform();
+	AdjustTransform();
 }
 
 void CController::Control(const ControllerInput &input)
@@ -108,10 +108,10 @@ void CController::Control(const ControllerInput &input)
 	Util::Clip(-CAMERA_PITCH_LIMITATION, CAMERA_PITCH_LIMITATION, m_rotation.x);
 	m_target->GetTransform().SetRotation(m_rotation);
 
-	AdjustTrasform();
+	AdjustTransform();
 }
 
-void CController::AdjustTrasform()
+void CController::AdjustTransform()
 {
 	D3DXMATRIX matrixRotationX, matrixRotationY, matrixRotationZ, matrixRotation;
 

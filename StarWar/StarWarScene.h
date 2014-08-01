@@ -47,6 +47,7 @@ protected:
 public:	
 	CStarWarScene();
 	void Update(ControllerInput &input);
+	void UpdatePhysics();
 
 };
 
