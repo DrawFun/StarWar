@@ -26,7 +26,7 @@ public:
 	void Roll(float angle)	{m_rotation.z += angle;};
 	void Pitch(float angle)	{m_rotation.x += angle;};
 	void Yaw(float angle)	{m_rotation.y += angle;};
-	void Rotate(D3DXVECTOR3 &rotation)	{D3DXQUATERNION qRotation; D3DXQuaternionRotationYawPitchRoll(&qRotation, rotation.y, rotation.x, rotation.z); m_rotation *= qRotation;};
+	void Rotate(D3DXQUATERNION &rotation)	{m_rotation = rotation * m_rotation;};
 	void Translate(D3DXVECTOR3 &direction)	{m_position += direction;};
 	void Scale(D3DXVECTOR3 &scale)	{m_scale.x *= scale.x;	m_scale.y *= scale.y;	m_scale.z *= scale.z;};
 
