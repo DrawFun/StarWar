@@ -11,6 +11,10 @@ private:
 	D3DXVECTOR3 m_position;
 	D3DXVECTOR3 m_scale;
 	D3DXVECTOR3 m_rotation;	
+	
+	D3DXVECTOR3 m_worldPosition;
+	D3DXVECTOR3 m_worldScale;
+	D3DXVECTOR3 m_worldRotation;	
 
 	D3DXMATRIX m_matrixWorld;
 	CTransform *m_pParents;
@@ -19,8 +23,7 @@ private:
 public:
 	CTransform(const D3DXVECTOR3 &position = D3DXVECTOR3(0, 0, 0), 
 	 const D3DXVECTOR3 &scale = D3DXVECTOR3(1, 1, 1),
-	 const D3DXVECTOR3 &rotation = D3DXVECTOR3(0, 0, 0)) 
-	 : m_position(position), m_scale(scale), m_rotation(rotation), m_pParents(NULL){};	
+	 const D3DXVECTOR3 &rotation = D3DXVECTOR3(0, 0, 0));	
 	~CTransform();
 	void UpdateMatrix();
 
@@ -31,6 +34,9 @@ public:
 	void Translate(D3DXVECTOR3 &direction)	{m_position += direction;};
 	void Scale(D3DXVECTOR3 &scale)	{m_scale.x *= scale.x;	m_scale.y *= scale.y;	m_scale.z *= scale.z;};
 
+	D3DXVECTOR3 GetWorldPosition()	{return m_worldPosition;};
+	D3DXVECTOR3 GetWorldRotation()	{return m_worldRotation;};
+	D3DXVECTOR3 GetWorldScale()	{return m_worldScale;};
 	D3DXVECTOR3 GetPosition()	{return m_position;};
 	D3DXVECTOR3 GetRotation()	{return m_rotation;};
 	D3DXVECTOR3 GetScale()	{return m_scale;};

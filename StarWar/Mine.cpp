@@ -3,7 +3,7 @@
 void CMine::Update()
 {
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
-	pd3dDevice->SetTransform(D3DTS_WORLD, &this->GetTransform().GetWorldMatrix());	
+	pd3dDevice->SetTransform(D3DTS_WORLD, &this->GetTransform()->GetWorldMatrix());	
 	//m_transform.Yaw(m_rotateSpeed);
 	//m_transform.UpdateMatrix();
 	

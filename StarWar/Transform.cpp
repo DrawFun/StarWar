@@ -1,5 +1,14 @@
 #include "Transform.h"
 
+CTransform::CTransform(const D3DXVECTOR3 &position, const D3DXVECTOR3 &scale, const D3DXVECTOR3 &rotation) 
+{
+	m_pParents = NULL;
+	m_worldPosition = m_position = position;
+	m_worldScale = m_scale = scale;
+	m_worldRotation = m_rotation = rotation;
+	UpdateMatrix();
+}	
+
 CTransform::~CTransform()
 {
 	//TODO 
@@ -25,10 +34,10 @@ void CTransform::UpdateMatrix()
 
 	if(m_pParents != NULL)
 	{
-		m_matrixWorld = m_pParents->GetWorldMatrix() * m_matrixWorld;
+		m_matrixWorld =  m_matrixWorld * m_pParents->GetWorldMatrix();
 		D3DXQUATERNION quaternion;
-		D3DXMatrixDecompose(&m_scale, &quaternion, &m_position, &m_matrixWorld);
-		m_rotation = QuaternionToEuler(quaternion);
+		D3DXMatrixDecompose(&m_worldScale, &quaternion, &m_worldPosition, &m_matrixWorld);
+		m_worldRotation = QuaternionToEuler(quaternion);
 	}
 
 	for(auto childTransform : m_pChildrenList)
@@ -40,17 +49,20 @@ void CTransform::UpdateMatrix()
 void CTransform::SetParents(CTransform *parents)
 {
 	m_pParents = parents; 
-	//m_position -= parents->GetPosition();
+	m_position -= parents->GetPosition();
+	UpdateMatrix();
 }
 
 void CTransform::AddChild(CTransform *child)
 {
 	m_pChildrenList.push_back(child);
 	child->SetParents(this);
+	UpdateMatrix();
 }
 	
 void CTransform::RemoveChild(CTransform *child)
 {
 	m_pChildrenList.remove(child);
 	child->SetParents(NULL);
+	UpdateMatrix();
 };

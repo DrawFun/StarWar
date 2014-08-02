@@ -9,8 +9,8 @@ CController::CController(CGameNode *target)
 {
 	assert(target != NULL);
 	m_target = target;
-	m_position = target->GetTransform().GetPosition();
-	m_rotation = target->GetTransform().GetRotation();
+	m_position = target->GetTransform()->GetPosition();
+	m_rotation = target->GetTransform()->GetRotation();
 
 	AdjustTransform();
 }
@@ -18,8 +18,8 @@ CController::CController(CGameNode *target)
 void CController::Control(const ControllerInput &input)
 {	
 	float moveSpeed = m_target->GetMoveSpeed();
-	m_position = m_target->GetTransform().GetPosition();
-	m_rotation = m_target->GetTransform().GetRotation();
+	m_position = m_target->GetTransform()->GetPosition();
+	m_rotation = m_target->GetTransform()->GetRotation();
 	float xAngle = 0, yAngle = 0;
 	POINT ptCurrentMousePosit;
 	ptCurrentMousePosit.x = input.currentMousePosition.x;
@@ -101,12 +101,15 @@ void CController::Control(const ControllerInput &input)
 
 	//DELETE
 	m_position = attemptPosition;
-	m_target->GetTransform().SetPosition(m_position);
+	m_target->GetTransform()->SetPosition(m_position);
 
 	m_rotation += D3DXVECTOR3(xAngle, yAngle, 0);
 	Util::Clip(-CAMERA_PITCH_LIMITATION, CAMERA_PITCH_LIMITATION, m_rotation.x);
-	m_target->GetTransform().SetRotation(m_rotation);
-
+	m_target->GetTransform()->SetRotation(m_rotation);
+		//AllocConsole();//注意检查返回值
+		//_cprintf("%f, %f, %f\n", m_position.x, m_position.y, m_position.z);
+		//AllocConsole();//注意检查返回值
+		//_cprintf("%f, %f, %f\n", m_rotation.x, m_rotation.y, m_rotation.z);
 	AdjustTransform();
 }
 
@@ -118,7 +121,7 @@ void CController::AdjustTransform()
 	m_right = D3DXVECTOR3(1, 0, 0);
 	m_up = D3DXVECTOR3(0, 1, 0);
 
-	D3DXVECTOR3 rotation = m_target->GetTransform().GetRotation();
+	D3DXVECTOR3 rotation = m_target->GetTransform()->GetRotation();
 	D3DXMatrixRotationX(&matrixRotationX, rotation.x); 
 	D3DXMatrixRotationY(&matrixRotationY, rotation.y); 
 	D3DXMatrixRotationZ(&matrixRotationZ, rotation.z); 

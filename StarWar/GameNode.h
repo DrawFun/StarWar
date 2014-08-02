@@ -27,7 +27,7 @@ public:
 	float GetMoveSpeed();
 	GameNodeType GetType();
 	std::vector<Collider> GetCollider();
-	CTransform& GetTransform();
+	CTransform *GetTransform();
 
 	void SetMoveSpeed(float speed);
 	void SetParents(CGameNode *parents);

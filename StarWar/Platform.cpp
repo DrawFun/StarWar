@@ -3,7 +3,7 @@
 void CPlatform::Update()
 {
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
-	pd3dDevice->SetTransform(D3DTS_WORLD, &this->GetTransform().GetWorldMatrix());	
+	pd3dDevice->SetTransform(D3DTS_WORLD, &this->GetTransform()->GetWorldMatrix());	
 	if(m_moveCounter < PLATFORM_MOVE_FRAME_PERIOD)
 	{
 		//m_transform.Yaw(m_rotationSpeed);
@@ -16,7 +16,6 @@ void CPlatform::Update()
 		m_rotationSpeed = -m_rotationSpeed;
 		m_horizontalSpeed = -m_horizontalSpeed;
 	}
-	//m_transform.UpdateMatrix();
     pd3dDevice->SetMaterial(&m_pMeshMaterials);
 	m_pMesh->DrawSubset(0);
 
@@ -62,8 +61,7 @@ void CPlatform::CollidedCallback(CGameNode *colliding)
 {
 	switch(colliding->GetType())
 	{
-	case PLATFORM:
-		assert(0);
+	case PLATFORM:		
 		break;
 	case HUMAN:
 	case ZERG:
