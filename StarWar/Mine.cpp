@@ -74,7 +74,7 @@ bool CMine::InitColliders()
 	pSnowmanMesh->LockVertexBuffer( D3DLOCK_READONLY, &pVB );
 	UINT uStride = D3DXGetDeclVertexSize( decl, 0 );
 	D3DXComputeBoundingBox(( const D3DXVECTOR3* )pVB, pSnowmanMesh->GetNumVertices(), uStride, &pMin, &pMax);
-		pMin *= 0.05;
+	pMin *= 0.05;
 	pMax *= 0.05;
 	Collider col(pMin, pMax);
 	m_colliders.push_back(col);
@@ -84,19 +84,21 @@ bool CMine::InitColliders()
 
 void CMine::CollidingCallback(CGameNode *collided)
 {
+	//AllocConsole();
+	//_cprintf("%d->%d\n", this->m_type, collided->GetType());
 }
 	
 
 void CMine::CollidedCallback(CGameNode *colliding)
 {
+	//AllocConsole();
+	//_cprintf("%d<-%d\n", this->m_type, colliding->GetType());
 	switch(colliding->GetType())
 	{
-	case MINE:
-		assert(0);
+	case MINE:		
 		break;
 	case HUMAN:
-		AllocConsole();//注意检查返回值
-		_cprintf("HUMAN\n");
+		break;
 	case ZERG_TELEPORT:
 	case ZERG:
 		break;

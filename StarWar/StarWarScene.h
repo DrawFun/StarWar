@@ -46,10 +46,11 @@ private:
 	
 protected:
 	std::list<CGameNode*> m_listRootGameNodes;
+	std::list<CGameNode*> m_listCollisionGameNodes;
 public:	
 	CStarWarScene();
 	void Update(ControllerInput &input);
-	void UpdatePhysics();
+	void UpdatePhysics(CGameNode *checking);
 
 };
 

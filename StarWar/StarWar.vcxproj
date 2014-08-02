@@ -73,6 +73,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Controller.cpp" />
     <ClCompile Include="DXEngine.cpp" />
+    <ClCompile Include="FPS.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mine.cpp" />
     <ClCompile Include="GameNode.cpp" />
@@ -94,6 +95,7 @@
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="DXEngine.h" />
+    <ClInclude Include="FPS.h" />
     <ClInclude Include="Mine.h" />
     <ClInclude Include="GameNode.h" />
     <ClInclude Include="Missile.h" />

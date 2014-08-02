@@ -15,7 +15,7 @@
 #include "Util.h"
 #include "DXEngine.h"
 #include "StarWarScene.h"
-
+#include "FPS.h"
 
 //------------------------------------------------------------------------------
 // GLOBALS VARIABLES
@@ -25,6 +25,7 @@ LPDIRECT3D9             g_pD3D           = NULL;
 LPDIRECT3DDEVICE9       g_pd3dDevice     = NULL;
 
 CStarWarScene *pStarWarScene = NULL;
+
 
 //Controler related variables 
 POINT g_ptLastMousePosit; //Last mouse position
@@ -88,7 +89,10 @@ int WINAPI WinMain(	HINSTANCE hInstance,
 	
 	//Init D3D related resource here
 	init();
-
+	CFPS GameTime;
+	char s[20];
+	
+	GameTime.Start();
 	while( uMsg.message != WM_QUIT )
 	{
 		if( PeekMessage( &uMsg, NULL, 0, 0, PM_REMOVE ) )
@@ -101,13 +105,16 @@ int WINAPI WinMain(	HINSTANCE hInstance,
 			//Calculate the elapsed time
 			g_dCurTime     = timeGetTime();
 			g_fElpasedTime = (float)((g_dCurTime - g_dLastTime) * 0.001);
-			g_dLastTime    = g_dCurTime;
-
+			g_dLastTime    = g_dCurTime;	
+			GameTime.Tick();
+			GameTime.CalcFPS();
+			sprintf(s, "FPS: %f", GameTime.GetFPS());
+			SetWindowText(g_hWnd, s);
 			//Render current frame
 		    render();
 		}
 	}
-
+	GameTime.Stop();
 	//Release resource and close current window
 	shutDown();
 

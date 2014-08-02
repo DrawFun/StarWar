@@ -63,11 +63,14 @@ bool CAirplane::InitColliders()
 
 void CAirplane::CollidingCallback(CGameNode *collided)
 {
-
+	//AllocConsole();
+	//_cprintf("%d->%d\n", this->m_type, collided->GetType());
 }
 
 void CAirplane::CollidedCallback(CGameNode *colliding)
 {
+	//AllocConsole();
+	//_cprintf("%d<-%d\n", this->m_type, colliding->GetType());
 	switch(colliding->GetType())
 	{
 	case PLATFORM:		

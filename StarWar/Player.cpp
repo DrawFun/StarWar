@@ -74,18 +74,24 @@ bool CPlayer::InitColliders()
 
 void CPlayer::CollidingCallback(CGameNode *collided)
 {
+	AllocConsole();
+	_cprintf("%d->%d\n", this->m_type, collided->GetType());
 	switch(collided->GetType())
 	{
 	case HUMAN:
-		assert(0);
 		break;
 	case ZERG:
 	case ZERG_TELEPORT:
+		//m_transform.Translate(D3DXVECTOR3(0, dynamic_cast<CPlatform *> (collided)->GetHeight(), 0));	
+		m_transform.SetParents(collided->GetTransform());	
+		collided->GetTransform()->AddChild(this->GetTransform());
+		break;
 	case MINE:
 		break;
 	case PLATFORM:
-		m_transform.Translate(D3DXVECTOR3(0, dynamic_cast<CPlatform *> (collided)->GetHeight(), 0));	
+		//m_transform.Translate(D3DXVECTOR3(0, dynamic_cast<CPlatform *> (collided)->GetHeight(), 0));	
 		m_transform.SetParents(collided->GetTransform());	
+		collided->GetTransform()->AddChild(this->GetTransform());
 		break;
 	default:
 		break;
@@ -95,5 +101,6 @@ void CPlayer::CollidingCallback(CGameNode *collided)
 
 void CPlayer::CollidedCallback(CGameNode *colliding)
 {
-
+	AllocConsole();
+	_cprintf("%d<-%d\n", this->m_type, colliding->GetType());
 }

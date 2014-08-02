@@ -63,11 +63,14 @@ bool CZergTeleport::InitColliders()
 
 void CZergTeleport::CollidingCallback(CGameNode *collided)
 {
-
+	AllocConsole();
+	_cprintf("ZERGTELEPORT colliding\n");
 }
 
 void CZergTeleport::CollidedCallback(CGameNode *colliding)
 {
+	AllocConsole();
+	_cprintf("ZERGTELEPORT collided\n");
 	switch(colliding->GetType())
 	{
 	case PLATFORM:		

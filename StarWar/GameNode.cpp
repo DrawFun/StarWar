@@ -24,8 +24,6 @@ bool CGameNode::InitTransform(const CTransform &transform)
 {
 	m_transform = transform;
 	//m_transform.UpdateMatrix();
-	//TODO
-	m_moveSpeed = 10;
 	return true;
 }
 

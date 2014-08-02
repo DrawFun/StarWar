@@ -20,7 +20,7 @@ public:
 
 	static bool IsCollision(std::vector<Collider> colliders1, std::vector<Collider> colliders2, 
 		D3DXVECTOR3 position1, D3DXVECTOR3 position2)
-	{
+	{		
 		for(int i = 0; i < colliders1.size(); ++i)
 		{
 			for(int j = 0; j < colliders2.size(); ++j)

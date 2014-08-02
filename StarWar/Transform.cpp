@@ -49,7 +49,7 @@ void CTransform::UpdateMatrix()
 void CTransform::SetParents(CTransform *parents)
 {
 	m_pParents = parents; 
-	m_position -= parents->GetPosition();
+	m_position = m_worldPosition - parents->GetWorldPosition();
 	UpdateMatrix();
 }
 
@@ -63,6 +63,6 @@ void CTransform::AddChild(CTransform *child)
 void CTransform::RemoveChild(CTransform *child)
 {
 	m_pChildrenList.remove(child);
-	child->SetParents(NULL);
+	//child->SetParents(NULL);
 	UpdateMatrix();
 };

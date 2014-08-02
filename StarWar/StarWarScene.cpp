@@ -18,6 +18,8 @@ CStarWarScene::CStarWarScene()
 	m_listRootGameNodes.push_back(m_pTerrain);
 	m_listRootGameNodes.push_back(m_pPlayer);
 
+	m_listCollisionGameNodes.push_back(m_pPlayer);
+
 	CTransform platformTramsforms[PLATFORM_NUM] = 
 		{D3DXVECTOR3(50.0f, 0.0f, -50.0f),
 		D3DXVECTOR3(-50.0f, 0.0f, -50.0f), 
@@ -25,10 +27,11 @@ CStarWarScene::CStarWarScene()
 
 	for(int i = 0; i < PLATFORM_NUM; ++i)
 	{
-		m_pArrayPlatform[i] = new CPlatform(20.0f, 1.0f, 20.0f, 0.02f, 0.005f);
+		m_pArrayPlatform[i] = new CPlatform(20.0f, 2.0f, 20.0f, 0.02f, 0.005f);
 		m_pArrayPlatform[i]->InitTransform(platformTramsforms[i]);
 		rootNode.AddChild(m_pArrayPlatform[i]->GetTransform());
 		m_listRootGameNodes.push_back(m_pArrayPlatform[i]);
+		m_listCollisionGameNodes.push_back(m_pArrayPlatform[i]);
 	}
 
 	CTransform mineTramsforms[MINE_NUM] = 
@@ -42,6 +45,7 @@ CStarWarScene::CStarWarScene()
 		m_pArrayMine[i]->InitTransform(mineTramsforms[i]);
 		m_pArrayPlatform[i]->GetTransform()->AddChild(m_pArrayMine[i]->GetTransform());
 		m_listRootGameNodes.push_back(m_pArrayMine[i]);
+		m_listCollisionGameNodes.push_back(m_pArrayMine[i]);
 	}
 
 	CTransform airplaneTramsforms[MINE_NUM] = 
@@ -55,6 +59,7 @@ CStarWarScene::CStarWarScene()
 		m_pArrayAirplane[i]->InitTransform(airplaneTramsforms[i]);
 		m_pArrayPlatform[i]->GetTransform()->AddChild(m_pArrayAirplane[i]->GetTransform());
 		m_listRootGameNodes.push_back(m_pArrayAirplane[i]);
+		m_listCollisionGameNodes.push_back(m_pArrayAirplane[i]);
 	}
 
 	m_pZergTeleport = new CZergTeleport();		
@@ -63,6 +68,7 @@ CStarWarScene::CStarWarScene()
 	m_pZergTeleport->InitColliders();
 	rootNode.AddChild(m_pZergTeleport->GetTransform());
 	m_listRootGameNodes.push_back(m_pZergTeleport);
+	m_listCollisionGameNodes.push_back(m_pZergTeleport);
 
 	for(auto gameNode : m_listRootGameNodes)
 	{
@@ -70,10 +76,10 @@ CStarWarScene::CStarWarScene()
 		gameNode->InitColliders();
 	}
 	
-	m_pMainCamera = new CCamera(m_pArrayMine[0], D3DXVECTOR3(0, 0, -15));
+	m_pMainCamera = new CCamera(m_pPlayer, D3DXVECTOR3(0, 0, -15));
 	m_pSkyBox->SetCamera(m_pMainCamera);
 
-	m_pController = new CController(m_pArrayMine[0]);
+	m_pController = new CController(m_pPlayer);
 
 }
 
@@ -83,6 +89,11 @@ void CStarWarScene::Update(ControllerInput &input)
 	
 	rootNode.UpdateMatrix();
 
+	for(auto collider : m_listCollisionGameNodes)
+	{
+		UpdatePhysics(collider);
+	}
+
 	for(auto gameNode : m_listRootGameNodes)
 	{
 		gameNode->Update();
@@ -91,7 +102,14 @@ void CStarWarScene::Update(ControllerInput &input)
 	m_pMainCamera->LateUpdate();
 }
 
-void UpdatePhysics()
+void CStarWarScene::UpdatePhysics(CGameNode *checking)
 {
-	
+	for(auto checked : m_listCollisionGameNodes)
+	{
+		if(checking != checked && Collider::IsCollision(checking->GetCollider(), checked->GetCollider(), checking->GetTransform()->GetWorldPosition(), checked->GetTransform()->GetWorldPosition()))
+		{
+			checking->CollidingCallback(checked);
+			checked->CollidedCallback(checking);
+		}
+	}
 }

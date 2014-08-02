@@ -6,7 +6,7 @@ void CPlatform::Update()
 	pd3dDevice->SetTransform(D3DTS_WORLD, &this->GetTransform()->GetWorldMatrix());	
 	if(m_moveCounter < PLATFORM_MOVE_FRAME_PERIOD)
 	{
-		m_transform.Yaw(m_rotationSpeed);
+		//m_transform.Yaw(m_rotationSpeed);
 		m_transform.Translate(D3DXVECTOR3(m_horizontalSpeed, 0.0f, m_horizontalSpeed));
 		++m_moveCounter;
 	}
@@ -54,11 +54,14 @@ bool CPlatform::InitColliders()
 
 void CPlatform::CollidingCallback(CGameNode *collided)
 {
-
+	//AllocConsole();
+	//_cprintf("%d->%d\n", this->m_type, collided->GetType());
 }
 
 void CPlatform::CollidedCallback(CGameNode *colliding)
 {
+	//AllocConsole();
+	//_cprintf("%d<-%d\n", this->m_type, colliding->GetType());
 	switch(colliding->GetType())
 	{
 	case PLATFORM:		
