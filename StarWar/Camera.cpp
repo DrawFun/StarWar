@@ -33,15 +33,9 @@ void CCamera::UpdateViewMatrix()
 
 	D3DXVECTOR3 rotation = m_target->GetTransform()->GetWorldRotation();
 	
-	D3DXMatrixRotationX(&matrixRotationX, rotation.x); 
-
-	D3DXMatrixRotationY(&matrixRotationY, rotation.y); 
-
-	D3DXMatrixRotationZ(&matrixRotationZ, rotation.z); 
-
+	D3DXMatrixRotationYawPitchRoll(&matrixRotation, rotation.y , rotation.x, rotation.z);
 	D3DXVECTOR3 m_offsetPosition1 = m_offsetPosition;   
-	D3DXVec3Normalize( &m_offsetPosition1, &m_offsetPosition1 );
-	matrixRotation = matrixRotationX * matrixRotationY * matrixRotationZ;
+	D3DXVec3Normalize( &m_offsetPosition1, &m_offsetPosition1 );	
 	
 	//D3DXVec3TransformCoord(&m_look, &m_look, &matrixRotation);
 	//D3DXVec3TransformCoord(&m_right, &m_right, &matrixRotation);
@@ -50,9 +44,9 @@ void CCamera::UpdateViewMatrix()
 
 	D3DXVec3Normalize( &m_offsetPosition1, &m_offsetPosition1 );
 
-	eye = m_target->GetTransform()->GetPosition() + m_offsetPosition1 * 50;
+	eye = m_target->GetTransform()->GetWorldPosition() + m_offsetPosition1 * 50;
 	m_position = eye;
-	D3DXMatrixLookAtLH(&view, &eye, &m_target->GetTransform()->GetPosition(), &m_up);
+	D3DXMatrixLookAtLH(&view, &eye, &m_target->GetTransform()->GetWorldPosition(), &m_up);
 
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
 	pd3dDevice->SetTransform( D3DTS_VIEW, &view ); 

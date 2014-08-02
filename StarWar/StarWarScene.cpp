@@ -38,7 +38,7 @@ CStarWarScene::CStarWarScene()
 
 	for(int i = 0; i < MINE_NUM; ++i)
 	{
-		m_pArrayMine[i] = new CMine(0.0f); 
+		m_pArrayMine[i] = new CMine(0.02f); 
 		m_pArrayMine[i]->InitTransform(mineTramsforms[i]);
 		m_pArrayPlatform[i]->GetTransform()->AddChild(m_pArrayMine[i]->GetTransform());
 		m_listRootGameNodes.push_back(m_pArrayMine[i]);
