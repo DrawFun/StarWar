@@ -82,16 +82,18 @@ void CPlayer::CollidingCallback(CGameNode *collided)
 		break;
 	case ZERG:
 	case ZERG_TELEPORT:
-		//m_transform.Translate(D3DXVECTOR3(0, dynamic_cast<CPlatform *> (collided)->GetHeight(), 0));	
-		m_transform.SetParents(collided->GetTransform());	
-		collided->GetTransform()->AddChild(this->GetTransform());
+		//m_transform.Translate(D3DXVECTOR3(0, dynamic_cast<CPlatform *> (collided)->GetHeight(), 0));			
+		collided->GetTransform()->AddChild(&m_transform);
 		break;
 	case MINE:
 		break;
 	case PLATFORM:
 		//m_transform.Translate(D3DXVECTOR3(0, dynamic_cast<CPlatform *> (collided)->GetHeight(), 0));	
-		m_transform.SetParents(collided->GetTransform());	
-		collided->GetTransform()->AddChild(this->GetTransform());
+		collided->GetTransform()->AddChild(&m_transform);
+		break;
+	case AIRPLANE:
+		collided->GetTransform()->AddChild(&m_transform);
+		
 		break;
 	default:
 		break;

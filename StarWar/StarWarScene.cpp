@@ -1,6 +1,5 @@
 #include "StarWarScene.h"
 
-
 CStarWarScene::CStarWarScene()
 {	
 	m_pSkyBox = new CSkyBox();

@@ -6,18 +6,18 @@ CTransform::CTransform(const D3DXVECTOR3 &position, const D3DXVECTOR3 &scale, co
 	m_worldPosition = m_position = position;
 	m_worldScale = m_scale = scale;
 	m_worldRotation = m_rotation = rotation;
+	D3DXQuaternionRotationYawPitchRoll(&m_qWorldRotation, m_worldRotation.y, m_worldRotation.x, m_worldRotation.z);	
 	UpdateMatrix();
 }	
 
 CTransform::~CTransform()
 {
-	//TODO 
 	if(m_pParents != NULL)
 	{
 		m_pParents->RemoveChild(this);
 		for(auto childTransform : m_pChildrenList)
 		{
-			childTransform->SetParents(NULL);
+			childTransform->ResetTransform(NULL);
 		}
 	}
 }
@@ -37,6 +37,7 @@ void CTransform::UpdateMatrix()
 		m_matrixWorld =  m_matrixWorld * m_pParents->GetWorldMatrix();
 		D3DXQUATERNION quaternion;
 		D3DXMatrixDecompose(&m_worldScale, &quaternion, &m_worldPosition, &m_matrixWorld);
+		m_qWorldRotation = quaternion;
 		m_worldRotation = QuaternionToEuler(quaternion);
 	}
 
@@ -46,23 +47,43 @@ void CTransform::UpdateMatrix()
 	}
 }
 
-void CTransform::SetParents(CTransform *parents)
+void CTransform::ResetTransform(CTransform *parents)
 {
-	m_pParents = parents; 
-	m_position = m_worldPosition - parents->GetWorldPosition();
+	m_pParents = parents;
+	if(m_pParents != NULL)
+	{
+		//Reset position
+		m_position = m_worldPosition - m_pParents->GetWorldPosition();
+		//Reset rotation
+		//D3DXQUATERNION qLocal, qParents, qChild;
+		//qChild = this->GetWorldRotation();	
+		//qParents = parents->GetWorldRotation();
+		//D3DXQuaternionNormalize(&qChild, &qChild);
+		//D3DXQuaternionNormalize(&qParents, &qParents);
+		//D3DXQuaternionInverse(&qParents, &qParents);
+
+		//qLocal = qChild * qParents;
+		//D3DXQuaternionNormalize(&qLocal, &qLocal);
+		//m_rotation = QuaternionToEuler(qLocal);
+		//m_qWorldRotation = qLocal;
+		//Reset scale
+	}
 	UpdateMatrix();
 }
 
 void CTransform::AddChild(CTransform *child)
 {
+	if(child->GetParents() != NULL)
+	{
+		CTransform *oldParents = child->GetParents();
+		oldParents->RemoveChild(child);
+	}
 	m_pChildrenList.push_back(child);
-	child->SetParents(this);
-	UpdateMatrix();
+	
+	child->ResetTransform(this);
 }
 	
 void CTransform::RemoveChild(CTransform *child)
 {
 	m_pChildrenList.remove(child);
-	//child->SetParents(NULL);
-	UpdateMatrix();
 };

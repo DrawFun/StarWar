@@ -15,6 +15,7 @@ private:
 	D3DXVECTOR3 m_worldPosition;
 	D3DXVECTOR3 m_worldScale;
 	D3DXVECTOR3 m_worldRotation;	
+	D3DXQUATERNION m_qWorldRotation;
 
 	D3DXMATRIX m_matrixWorld;
 	CTransform *m_pParents;
@@ -35,7 +36,7 @@ public:
 	void Scale(D3DXVECTOR3 &scale)	{m_scale.x *= scale.x;	m_scale.y *= scale.y;	m_scale.z *= scale.z;};
 
 	D3DXVECTOR3 GetWorldPosition()	{return m_worldPosition;};
-	D3DXVECTOR3 GetWorldRotation()	{return m_worldRotation;};
+	D3DXQUATERNION GetWorldRotation()	{return m_qWorldRotation;};
 	D3DXVECTOR3 GetWorldScale()	{return m_worldScale;};
 	D3DXVECTOR3 GetPosition()	{return m_position;};
 	D3DXVECTOR3 GetRotation()	{return m_rotation;};
@@ -47,11 +48,11 @@ public:
 	void SetScale(D3DXVECTOR3 &scale)	{m_scale = scale;};
 	void SetRotation(D3DXVECTOR3 &rotation)	{m_rotation = rotation;};
 
-	void SetParents(CTransform *parents);
-
 	void AddChild(CTransform *child);
 	void RemoveChild(CTransform *child);
+	void ResetTransform(CTransform *parents = NULL);
 
+public:
 	static D3DXVECTOR3 QuaternionToEuler(D3DXQUATERNION &q)
 	{
 		D3DXVECTOR3 ret;
@@ -75,7 +76,9 @@ public:
 		ret.z = asin(2*test);
 		ret.x = atan2(2*q.x*q.w-2*q.y*q.z , 1 - 2*sqx - 2*sqz);
 		return ret;
-  };
+	};
+
+
 };
 
 #endif

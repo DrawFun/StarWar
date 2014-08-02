@@ -75,7 +75,8 @@ void CAirplane::CollidedCallback(CGameNode *colliding)
 	{
 	case PLATFORM:		
 		break;
-	case HUMAN:
+	case HUMAN:		
+		break;
 	case ZERG:
 		break;
 	case ZERG_TELEPORT:

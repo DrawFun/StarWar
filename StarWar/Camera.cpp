@@ -31,9 +31,12 @@ void CCamera::UpdateViewMatrix()
 	D3DXVECTOR3 m_right = D3DXVECTOR3(1, 0, 0);
 	D3DXVECTOR3 m_up = D3DXVECTOR3(0, 1, 0);
 
-	D3DXVECTOR3 rotation = m_target->GetTransform()->GetWorldRotation();
-	
-	D3DXMatrixRotationYawPitchRoll(&matrixRotation, rotation.y , rotation.x, rotation.z);
+	//D3DXVECTOR3 rotation = m_target->GetTransform()->GetWorldRotation();	
+	//D3DXMatrixRotationYawPitchRoll(&matrixRotation, rotation.y , rotation.x, rotation.z);
+
+	D3DXQUATERNION quaternion = m_target->GetTransform()->GetWorldRotation();
+	D3DXMatrixRotationQuaternion(&matrixRotation, &quaternion);
+
 	D3DXVECTOR3 m_offsetPosition1 = m_offsetPosition;   
 	D3DXVec3Normalize( &m_offsetPosition1, &m_offsetPosition1 );	
 	
