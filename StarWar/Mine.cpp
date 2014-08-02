@@ -1,35 +1,50 @@
 #include "Mine.h"
 
+CMine::CMine(float rotateSpeed = 0) : m_rotateSpeed(rotateSpeed) 
+{
+	m_type = MINE;	
+	m_enableControl = false;
+	m_enablePhysics = true;
+	m_enableRender = true;
+	m_isControlable = true; 
+	m_isFlyable = false;	
+}
+
+void CMine::Render(LPDIRECT3DDEVICE9 pd3dDevice)
+{
+	if(m_enableRender)
+	{
+		pd3dDevice->SetTransform(D3DTS_WORLD, &m_transform.GetWorldMatrix());	
+
+		//Set texture on stage 0
+		pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+		pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+		//Set RGB mix method
+		pd3dDevice->SetTextureStageState(0, D3DTSS_TEXCOORDINDEX, 0);
+		pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP,   D3DTOP_MODULATE);
+	
+		//Set texture on stage 1
+		pd3dDevice->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+		pd3dDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+		//Set RGB mix method
+		pd3dDevice->SetTextureStageState(1, D3DTSS_TEXCOORDINDEX, 1);
+		pd3dDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
+
+		for( unsigned long i = 0; i < snowManNumMaterials; ++i )
+		{
+			pd3dDevice->SetMaterial(&pSnowmanMeshMaterials[i]);
+		
+			//Set multiple textures
+			pd3dDevice->SetTexture(0, pSnowmanTexture0);
+			pd3dDevice->SetTexture(1, pSnowmanTexture1);
+			pSnowmanMesh->DrawSubset(i);
+		}
+	}
+}
+
 void CMine::Update()
 {
-	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
-	pd3dDevice->SetTransform(D3DTS_WORLD, &this->GetTransform()->GetWorldMatrix());	
 	m_transform.Yaw(m_rotateSpeed);
-	//m_transform.UpdateMatrix();
-	
-	//Set texture on stage 0
-	pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	//Set RGB mix method
-	pd3dDevice->SetTextureStageState(0, D3DTSS_TEXCOORDINDEX, 0);
-	pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP,   D3DTOP_MODULATE);
-	
-	//Set texture on stage 1
-	pd3dDevice->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	pd3dDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	//Set RGB mix method
-	pd3dDevice->SetTextureStageState(1, D3DTSS_TEXCOORDINDEX, 1);
-	pd3dDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
-
-    for( unsigned long i = 0; i < snowManNumMaterials; ++i )
-    {
-        pd3dDevice->SetMaterial(&pSnowmanMeshMaterials[i]);
-		
-		//Set multiple textures
-		pd3dDevice->SetTexture(0, pSnowmanTexture0);
-		pd3dDevice->SetTexture(1, pSnowmanTexture1);
-        pSnowmanMesh->DrawSubset(i);
-    }
 }
 	
 bool CMine::InitVertices()

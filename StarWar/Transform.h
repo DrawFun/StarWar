@@ -47,6 +47,9 @@ public:
 	void SetPosition(D3DXVECTOR3 &position)	{m_position = position;};
 	void SetScale(D3DXVECTOR3 &scale)	{m_scale = scale;};
 	void SetRotation(D3DXVECTOR3 &rotation)	{m_rotation = rotation;};
+	void SetWorldPosition(D3DXVECTOR3 &position)	{m_worldPosition = position;};
+	void SetWorldScale(D3DXVECTOR3 &scale)	{m_worldScale = scale;};
+	void SetWorldRotation(D3DXQUATERNION &rotation)	{m_qWorldRotation = rotation;};
 
 	void AddChild(CTransform *child);
 	void RemoveChild(CTransform *child);

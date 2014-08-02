@@ -8,6 +8,12 @@
 //------------------------------------------------------------------------------
 CSkyBox::CSkyBox()
 {
+	m_type = SKYBOX; 	
+	m_enableControl = false;
+	m_enablePhysics = false;
+	m_enableRender = true;
+	m_isControlable = false; 
+	m_isFlyable = false;
 }
 
 //------------------------------------------------------------------------------
@@ -142,6 +148,38 @@ bool CSkyBox::InitVertices(void)
 	return true;
 }
 
+void CSkyBox::Render(LPDIRECT3DDEVICE9 pd3dDevice)
+{
+	if(m_enableRender)
+	{
+		pd3dDevice->SetTransform(D3DTS_WORLD, &m_transform.GetWorldMatrix());
+		//Disable z-depth buffer.
+		pd3dDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+		//Set SkyBoxVertex FVF type.
+		pd3dDevice->SetFVF( SkyBoxVertex::FVF );
+		//Binding the vertex buffer to D3D device data stream
+		pd3dDevice->SetStreamSource(0, m_pVertexBuffer, 0, sizeof(SkyBoxVertex));
+
+		pd3dDevice->SetMaterial(&m_pMeshMaterials);
+
+		//Draw skybox side by side
+		for (int i = 0; i < TOTAL_SIDES; ++i)
+		{
+			//Set the textures to be used
+			pd3dDevice->SetTexture( 0, m_pTextureArray[i] );
+
+			//Draw skybox
+			pd3dDevice->DrawPrimitive(
+				D3DPT_TRIANGLESTRIP, //Primitive type
+				i * VERTICES_PER_SIDE, //One side contains 4 vertices
+				2); //One side contains 2 triangles
+ 
+		}
+		//Enable z-depth buffer.
+		pd3dDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
+	}
+}
+
 //------------------------------------------------------------------------------
 // Name: CSkyBox::Draw(void)
 // Desc: Draw skybox and put it far away enough.
@@ -152,30 +190,5 @@ void CSkyBox::Update()
 
 	m_transform.SetPosition(m_pCamera->GetPosition());
 	m_transform.UpdateMatrix();
-	pd3dDevice->SetTransform(D3DTS_WORLD, &this->GetTransform()->GetWorldMatrix());
-	//Disable z-depth buffer.
-	pd3dDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
-	//Set SkyBoxVertex FVF type.
-	pd3dDevice->SetFVF( SkyBoxVertex::FVF );
-	//Binding the vertex buffer to D3D device data stream
-    pd3dDevice->SetStreamSource(0, m_pVertexBuffer, 0, sizeof(SkyBoxVertex));
-
-	pd3dDevice->SetMaterial(&m_pMeshMaterials);
-
-	//Draw skybox side by side
-	for (int i = 0; i < TOTAL_SIDES; ++i)
-    {
-		//Set the textures to be used
-        pd3dDevice->SetTexture( 0, m_pTextureArray[i] );
-
-		//Draw skybox
-        pd3dDevice->DrawPrimitive(
-			D3DPT_TRIANGLESTRIP, //Primitive type
-			i * VERTICES_PER_SIDE, //One side contains 4 vertices
-			2); //One side contains 2 triangles
- 
-    }
-	//Enable z-depth buffer.
-	pd3dDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
 
 }

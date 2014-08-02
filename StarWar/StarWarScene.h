@@ -18,13 +18,14 @@
 
 #include "Controller.h"
 
-class CStarWarScene
+class CStarWarScene : public CScene
 {
 private:
 	static const int PLATFORM_NUM = 3;
 	static const int AIRPLANE_NUM = 3;	
 	static const int MINE_NUM = 3;
 	static const int MAX_ZERG_NUM = 5;
+	static const int MAX_MISSILE_NUM = 10;
 
 	//Skybox pointer
 	CSkyBox *m_pSkyBox;
@@ -37,8 +38,8 @@ private:
 	CPlatform *m_pArrayPlatform[PLATFORM_NUM];
 	CMine *m_pArrayMine[MINE_NUM];
 	CAirplane *m_pArrayAirplane[AIRPLANE_NUM];
-	std::list<CZerg*> m_listZergs;
-	std::list<CMissile*> m_listMissile;
+	CZerg *m_pArrayZerg[MAX_ZERG_NUM];	
+	//CMissile *m_pArrayMissile[MAX_MISSILE_NUM];
 
 	CController *m_pController;
 
@@ -51,7 +52,10 @@ public:
 	CStarWarScene();
 	void Update(ControllerInput &input);
 	void UpdatePhysics(CGameNode *checking);
+	void CallBackEvent();
 
+private:
+	void CreateZergFromPool();
 };
 
 #endif

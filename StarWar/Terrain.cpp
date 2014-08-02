@@ -12,7 +12,12 @@ CTerrain::CTerrain(int sizeX, int sizeZ, int xBase, int zBase, int heightLimit, 
 	m_sizeX(sizeX), m_sizeZ(sizeZ), m_xBase(xBase), m_zBase(zBase), m_heightLimit(heightLimit), 
 	m_heightBase(heightBase), m_rate(rate)
 {
-
+	m_type = TERRAIN; 	
+	m_enableControl = false;
+	m_enablePhysics = false;
+	m_enableRender = true;
+	m_isControlable = false; 
+	m_isFlyable = false;
 }
 
 //------------------------------------------------------------------------------
@@ -268,22 +273,28 @@ void CTerrain::InitNormal(void)
 //------------------------------------------------------------------------------
 void CTerrain::Update(void)
 {
-	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
 	m_transform.UpdateMatrix();
-	pd3dDevice->SetTransform(D3DTS_WORLD, &this->GetTransform()->GetWorldMatrix());
-	//Set the textures to be used
-	pd3dDevice->SetTexture(0,m_pTexture);
-	//Set the vector FVF format
-	pd3dDevice->SetFVF(TerrainVertex::FVF);
-	pd3dDevice->SetMaterial(&m_pMeshMaterials);
-	//Draw terrain
-	pd3dDevice->DrawIndexedPrimitiveUP
-		(D3DPT_TRIANGLELIST,  //Primitive type
-		0, //Starting vertex id
-		m_sizeX * m_sizeZ, //Vertex number
-		(m_sizeX - 1) * (m_sizeZ - 1) * 2, //Primitive number
-		&m_pIndices[0], //Primitive starting address
-		D3DFMT_INDEX32,  //Index data format
-		&m_pVertexArray[0], //Vertex starting address
-		sizeof(TerrainVertex)); //Vertex size
+}
+
+void CTerrain::Render(LPDIRECT3DDEVICE9 pd3dDevice)
+{
+	if(m_enableRender)
+	{
+		pd3dDevice->SetTransform(D3DTS_WORLD, &m_transform.GetWorldMatrix());
+		//Set the textures to be used
+		pd3dDevice->SetTexture(0,m_pTexture);
+		//Set the vector FVF format
+		pd3dDevice->SetFVF(TerrainVertex::FVF);
+		pd3dDevice->SetMaterial(&m_pMeshMaterials);
+		//Draw terrain
+		pd3dDevice->DrawIndexedPrimitiveUP
+			(D3DPT_TRIANGLELIST,  //Primitive type
+			0, //Starting vertex id
+			m_sizeX * m_sizeZ, //Vertex number
+			(m_sizeX - 1) * (m_sizeZ - 1) * 2, //Primitive number
+			&m_pIndices[0], //Primitive starting address
+			D3DFMT_INDEX32,  //Index data format
+			&m_pVertexArray[0], //Vertex starting address
+			sizeof(TerrainVertex)); //Vertex size
+	}
 }

@@ -54,6 +54,7 @@ void CTransform::ResetTransform(CTransform *parents)
 	{
 		//Reset position
 		m_position = m_worldPosition - m_pParents->GetWorldPosition();
+
 		//Reset rotation
 		//D3DXQUATERNION qLocal, qParents, qChild;
 		//qChild = this->GetWorldRotation();	
@@ -61,12 +62,15 @@ void CTransform::ResetTransform(CTransform *parents)
 		//D3DXQuaternionNormalize(&qChild, &qChild);
 		//D3DXQuaternionNormalize(&qParents, &qParents);
 		//D3DXQuaternionInverse(&qParents, &qParents);
-
 		//qLocal = qChild * qParents;
 		//D3DXQuaternionNormalize(&qLocal, &qLocal);
 		//m_rotation = QuaternionToEuler(qLocal);
 		//m_qWorldRotation = qLocal;
+
 		//Reset scale
+		m_scale.x = m_worldScale.x / m_pParents->GetWorldScale().x;
+		m_scale.y = m_worldScale.y / m_pParents->GetWorldScale().y;
+		m_scale.z = m_worldScale.z / m_pParents->GetWorldScale().z;
 	}
 	UpdateMatrix();
 }

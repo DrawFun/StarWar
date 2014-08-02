@@ -14,8 +14,9 @@ protected:
 	LPDIRECT3DTEXTURE9 pSnowmanTexture1;
 
 public:
-	CMine(float rotateSpeed = 0) : m_rotateSpeed(rotateSpeed) {m_type = MINE;};
+	CMine(float rotateSpeed);
 	void Update();
+	void Render(LPDIRECT3DDEVICE9 pd3dDevice);
 	bool InitVertices();
 	bool InitColliders();
 	void CollidingCallback(CGameNode *collided);

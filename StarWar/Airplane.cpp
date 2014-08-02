@@ -1,19 +1,31 @@
 #include "Airplane.h"
 
+CAirplane::CAirplane()
+{
+	m_type = AIRPLANE;
+	m_enableControl = false;
+	m_enablePhysics = true;
+	m_enableRender = true;
+	m_isControlable = true; 
+	m_isFlyable = true;	
+}
+
+void CAirplane::Render(LPDIRECT3DDEVICE9 pd3dDevice)
+{
+	if(m_enableRender)
+	{
+		pd3dDevice->SetTransform(D3DTS_WORLD, &m_transform.GetWorldMatrix());
+		for( unsigned long i = 0; i < m_materialsNum; ++i )
+		{
+			pd3dDevice->SetMaterial(&m_pMeshMaterials[i]);
+			m_pMesh->DrawSubset(i);
+		}
+	}
+}
+
 void CAirplane::Update()
 {
-	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
-	pd3dDevice->SetTransform(D3DTS_WORLD, &this->GetTransform()->GetWorldMatrix());
-	//m_transform.UpdateMatrix();
-    for( unsigned long i = 0; i < m_materialsNum; ++i )
-    {
-        pd3dDevice->SetMaterial(&m_pMeshMaterials[i]);
-		
-		//Set multiple textures
-		//pd3dDevice->SetTexture(0, pSnowmanTexture0);
-		//pd3dDevice->SetTexture(1, pSnowmanTexture1);
-        m_pMesh->DrawSubset(i);
-    }
+	
 }
 	
 bool CAirplane::InitVertices()
@@ -39,11 +51,6 @@ bool CAirplane::InitVertices()
     }
 
     pD3DXMtrlBuffer->Release();
-
-	////Create textures from files
-	//D3DXCreateTextureFromFile( pd3dDevice, "Resource//Snowman1.jpg", &pSnowmanTexture0);
-	//D3DXCreateTextureFromFile( pd3dDevice, "Resource//Snowman2.jpg", &pSnowmanTexture1);
-	
 	return true;
 }
 

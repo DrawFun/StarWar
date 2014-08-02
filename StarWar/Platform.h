@@ -16,19 +16,10 @@ protected:
 
 	LPD3DXMESH m_pMesh; //Point to mesh
 	D3DMATERIAL9 m_pMeshMaterials; //Point to mesh material
-
-
-	LPDIRECT3DTEXTURE9 pSnowmanTexture0; //First texture
-	LPDIRECT3DTEXTURE9 pSnowmanTexture1; //Second texture
-	LPDIRECT3DVERTEXBUFFER9 pSnowmanVertexBuffer; //D3D vertext buffer 
-	
-	D3DMATERIAL9 *pSnowmanMeshMaterials; //Point to snowman mesh material
-	unsigned long snowManNumMaterials; //Number of material
-
 public:
-	CPlatform(float width, float height, float depth, float horizonlSpeed, float rotationSpeed) : 
-		m_width(width), m_height(height), m_depth(depth), m_horizontalSpeed(horizonlSpeed), m_rotationSpeed(rotationSpeed) {m_type = PLATFORM; m_moveCounter = 0;};
+	CPlatform(float width, float height, float depth, float horizonlSpeed, float rotationSpeed);
 	void Update();
+	void Render(LPDIRECT3DDEVICE9 pd3dDevice);
 	bool InitVertices();
 	bool InitColliders();
 	

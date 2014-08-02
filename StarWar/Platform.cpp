@@ -1,9 +1,30 @@
 #include "Platform.h"
 
+CPlatform::CPlatform(float width, float height, float depth, 
+					 float horizonlSpeed, float rotationSpeed) : 
+	m_width(width), m_height(height), m_depth(depth), m_horizontalSpeed(horizonlSpeed), m_rotationSpeed(rotationSpeed)
+{
+	m_type = PLATFORM; 
+	m_moveCounter = 0; 
+	m_enableControl = false;
+	m_enablePhysics = true;
+	m_enableRender = true;
+	m_isControlable = true; 
+	m_isFlyable = false;	
+}
+
+void CPlatform::Render(LPDIRECT3DDEVICE9 pd3dDevice)
+{	
+	if(m_enableRender)
+	{
+		pd3dDevice->SetTransform(D3DTS_WORLD, &m_transform.GetWorldMatrix());	
+		pd3dDevice->SetMaterial(&m_pMeshMaterials);
+		m_pMesh->DrawSubset(0);
+	}
+}
+
 void CPlatform::Update()
 {
-	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
-	pd3dDevice->SetTransform(D3DTS_WORLD, &this->GetTransform()->GetWorldMatrix());	
 	if(m_moveCounter < PLATFORM_MOVE_FRAME_PERIOD)
 	{
 		//m_transform.Yaw(m_rotationSpeed);
@@ -16,9 +37,6 @@ void CPlatform::Update()
 		m_rotationSpeed = -m_rotationSpeed;
 		m_horizontalSpeed = -m_horizontalSpeed;
 	}
-    pd3dDevice->SetMaterial(&m_pMeshMaterials);
-	m_pMesh->DrawSubset(0);
-
 }
 	
 bool CPlatform::InitVertices()
@@ -28,11 +46,11 @@ bool CPlatform::InitVertices()
 	D3DXCreateBox(pd3dDevice, m_width, m_height, m_depth, &m_pMesh, NULL);
 	ZeroMemory(&m_pMeshMaterials, sizeof(D3DMATERIAL9));
 	m_pMeshMaterials.Diffuse.r = 0;
-	m_pMeshMaterials.Diffuse.g = 0;
+	m_pMeshMaterials.Diffuse.g = 1;
 	m_pMeshMaterials.Diffuse.b = 1;
 	m_pMeshMaterials.Diffuse.a = 0.5;
 	m_pMeshMaterials.Ambient.r = 0;
-	m_pMeshMaterials.Ambient.g = 0;
+	m_pMeshMaterials.Ambient.g = 1;
 	m_pMeshMaterials.Ambient.b = 1;
 	m_pMeshMaterials.Ambient.a = 0.5;
 	return true;

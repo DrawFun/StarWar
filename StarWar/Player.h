@@ -6,16 +6,14 @@
 class CPlayer : public CGameNode
 {
 protected:
-	LPDIRECT3DTEXTURE9 pSnowmanTexture0; //First texture
-	LPDIRECT3DTEXTURE9 pSnowmanTexture1; //Second texture
-	LPDIRECT3DVERTEXBUFFER9 pSnowmanVertexBuffer; //D3D vertext buffer 
-	LPD3DXMESH pSnowmanMesh; //Point to snowman mesh
-	D3DMATERIAL9 *pSnowmanMeshMaterials; //Point to snowman mesh material
-	unsigned long snowManNumMaterials; //Number of material
+	LPD3DXMESH m_pMesh; 
+	D3DMATERIAL9 m_pMeshMaterials; 
+	unsigned long m_materialsNum; //Number of material
 
 public:
 	CPlayer();
 	void Update();
+	void Render(LPDIRECT3DDEVICE9 pd3dDevice);
 	bool InitVertices();
 	bool InitColliders();
 	void CollidingCallback(CGameNode *collided);

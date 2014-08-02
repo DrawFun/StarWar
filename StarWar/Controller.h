@@ -26,6 +26,7 @@ protected:
 
 public:
 	CController(CGameNode *target);
+	void SwitchController(CGameNode *target);
 	void Control(const ControllerInput &input);
 
 private:

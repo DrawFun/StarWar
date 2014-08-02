@@ -7,12 +7,26 @@
 
 CController::CController(CGameNode *target)
 {
-	assert(target != NULL);
-	m_target = target;
-	m_position = target->GetTransform()->GetPosition();
-	m_rotation = target->GetTransform()->GetRotation();
-
+	m_target = NULL;
+	SwitchController(target);
 	AdjustTransform();
+}
+
+void CController::SwitchController(CGameNode *target)
+{
+	assert(target != NULL);
+	if(target != NULL && target->IsControlable())
+	{
+		if(m_target != NULL)
+		{
+			m_target->SwitchControl(false);
+		}
+		m_target = target;
+		m_position = target->GetTransform()->GetPosition();
+		m_rotation = target->GetTransform()->GetRotation();
+		target->SwitchControl(true);
+		AdjustTransform();
+	}
 }
 
 void CController::Control(const ControllerInput &input)
@@ -59,6 +73,11 @@ void CController::Control(const ControllerInput &input)
     m_lastMousePosition.x = ptCurrentMousePosit.x;
     m_lastMousePosition.y = ptCurrentMousePosit.y;
 
+	if(!m_target->IsFlyable())
+	{
+		m_look.y = m_right.y = 0;
+	}
+
 	//Move camera position according the direction and distance(time * speed)
 
 	// Up Arrow Key - View moves forward
@@ -78,38 +97,12 @@ void CController::Control(const ControllerInput &input)
 		attemptPosition += (m_right * moveSpeed) * input.elpasedTime;
 	Util::Clip(0, 2048, attemptPosition.y);
 
-	//if(Collider::IsCollision(m_target->GetCollider(), mine->GetCollider(), attemptPosition, mine->GetTransform().GetPosition()))
-	//{		
-	//	m_target->CollidingCallback(mine);
-	//	mine->CollidedCallback(m_target);
-	//	//m_position = m_target->GetPosition();
-	//}
-	//else if(Collider::IsCollision(m_target->GetCollider(), platform->GetCollider(), attemptPosition, platform->GetTransform().GetPosition()))
-	//{
-	//	if(m_target->GetParents() != platform)
-	//	{
-	//		m_target->CollidingCallback(platform);
-	//		platform->CollidedCallback(m_target);
-	//	}
-	//}
-	//else
-	//{
-	//	m_position = attemptPosition;
-	//	m_target->GetTransform().SetPosition(m_position);		
-	//}
-
-
-	//DELETE
 	m_position = attemptPosition;
 	m_target->GetTransform()->SetPosition(m_position);
 
 	m_rotation += D3DXVECTOR3(xAngle, yAngle, 0);
 	Util::Clip(-CAMERA_PITCH_LIMITATION, CAMERA_PITCH_LIMITATION, m_rotation.x);
 	m_target->GetTransform()->SetRotation(m_rotation);
-		//AllocConsole();//注意检查返回值
-		//_cprintf("%f, %f, %f\n", m_position.x, m_position.y, m_position.z);
-		//AllocConsole();//注意检查返回值
-		//_cprintf("%f, %f, %f\n", m_rotation.x, m_rotation.y, m_rotation.z);
 	AdjustTransform();
 }
 

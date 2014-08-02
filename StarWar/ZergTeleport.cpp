@@ -1,49 +1,55 @@
 #include "ZergTeleport.h"
+#include "StarWarScene.h"
+CZergTeleport::CZergTeleport(float width, float height, float depth, float rotationSpeed) : 
+		m_width(width), m_height(height), m_depth(depth), m_rotationSpeed(rotationSpeed)
+{
+	m_type = ZERG_TELEPORT; 	
+	m_enableControl = false;
+	m_enablePhysics = true;
+	m_enableRender = true;
+	m_isControlable = true; 
+	m_isFlyable = false;
+	m_generationCounter = 0;
+}
+
+void CZergTeleport::Render(LPDIRECT3DDEVICE9 pd3dDevice)
+{	
+	if(m_enableRender)
+	{
+		pd3dDevice->SetTransform(D3DTS_WORLD, &m_transform.GetWorldMatrix());	
+		pd3dDevice->SetMaterial(&m_pMeshMaterials);
+		m_pMesh->DrawSubset(0);
+	}
+}
 
 void CZergTeleport::Update()
 {
-	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
-	pd3dDevice->SetTransform(D3DTS_WORLD, &this->GetTransform()->GetWorldMatrix());		
-	//m_transform.UpdateMatrix();
-    for( unsigned long i = 0; i < m_materialsNum; ++i )
-    {
-        pd3dDevice->SetMaterial(&m_pMeshMaterials[i]);
-		
-		//Set multiple textures
-		//pd3dDevice->SetTexture(0, pSnowmanTexture0);
-		//pd3dDevice->SetTexture(1, pSnowmanTexture1);
-        m_pMesh->DrawSubset(i);
-    }
+	m_transform.Yaw(m_rotationSpeed);
+	if(m_generationCounter < GENERATION_FRAME_PERIOD)
+	{
+		++m_generationCounter;
+	}
+	else
+	{
+		((CStarWarScene*)m_scene)->CallBackEvent();
+		m_generationCounter = 0;
+	}
 }
 	
 bool CZergTeleport::InitVertices()
 {
-	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();	
+	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
 
-	//Init snowman x model
-	LPD3DXBUFFER pD3DXMtrlBuffer;
-
-    D3DXLoadMeshFromX( "Resource//Jet.x", D3DXMESH_SYSTEMMEM, 
-                       pd3dDevice, NULL, 
-					   &pD3DXMtrlBuffer, NULL, &m_materialsNum, 
-					   &m_pMesh );
-
-    D3DXMATERIAL *d3dxMaterials = (D3DXMATERIAL*)pD3DXMtrlBuffer->GetBufferPointer();
-	m_pMeshMaterials = new D3DMATERIAL9[m_materialsNum];
-    for( unsigned long i = 0; i < m_materialsNum; ++i )
-    {
-        //Set materials
-        m_pMeshMaterials[i] = d3dxMaterials[i].MatD3D;
-        //Set the ambient color for the material
-        m_pMeshMaterials[i].Ambient = m_pMeshMaterials[i].Diffuse;
-    }
-
-    pD3DXMtrlBuffer->Release();
-
-	////Create textures from files
-	//D3DXCreateTextureFromFile( pd3dDevice, "Resource//Snowman1.jpg", &pSnowmanTexture0);
-	//D3DXCreateTextureFromFile( pd3dDevice, "Resource//Snowman2.jpg", &pSnowmanTexture1);
-	
+	D3DXCreateBox(pd3dDevice, m_width, m_height, m_depth, &m_pMesh, NULL);
+	ZeroMemory(&m_pMeshMaterials, sizeof(D3DMATERIAL9));
+	m_pMeshMaterials.Diffuse.r = 1;
+	m_pMeshMaterials.Diffuse.g = 0;
+	m_pMeshMaterials.Diffuse.b = 0;
+	m_pMeshMaterials.Diffuse.a = 0.8;
+	m_pMeshMaterials.Ambient.r = 1;
+	m_pMeshMaterials.Ambient.g = 0;
+	m_pMeshMaterials.Ambient.b = 0;
+	m_pMeshMaterials.Ambient.a = 0.8;
 	return true;
 }
 
@@ -79,6 +85,7 @@ void CZergTeleport::CollidedCallback(CGameNode *colliding)
 	case ZERG:
 		break;
 	case ZERG_TELEPORT:
+		break;
 	case MINE:
 		break;
 	default:

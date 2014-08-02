@@ -75,7 +75,7 @@
     <ClCompile Include="Physics.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Bullet.cpp">
+    <ClCompile Include="TargetedBullet.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -143,7 +143,10 @@
     <ClInclude Include="Physics.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Bullet.h">
+    <ClInclude Include="TargetedBullet.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsNode.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -47,6 +47,7 @@ public:
 	~CTerrain();
 	//Update the terrain.
 	void Update();	
+	void Render(LPDIRECT3DDEVICE9 pd3dDevice);
 	//Create vertex buffer.
 	bool InitVertices();
 	bool InitColliders(){return true;};

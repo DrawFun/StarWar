@@ -13,10 +13,11 @@ protected:
 	unsigned long m_materialsNum; //Number of material
 
 public:
-	CAirplane(){m_type = AIRPLANE;};
+	CAirplane();
 	void Update();
 	bool InitVertices();
 	bool InitColliders();
+	void Render(LPDIRECT3DDEVICE9 pd3dDevice);
 	
 	void CollidingCallback(CGameNode *collided);
 	void CollidedCallback(CGameNode *colliding);

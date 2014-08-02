@@ -197,7 +197,7 @@ LRESULT CALLBACK WindowProc( HWND   hWnd,
 void init( void )
 {
 	CDXEngine::Instance(g_hWnd);
-		g_pD3D = CDXEngine::Instance()->GetDx();
+	g_pD3D = CDXEngine::Instance()->GetDx();
 	g_pd3dDevice = CDXEngine::Instance()->GetDxDevice();
 	//Set samplers
 	g_pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);

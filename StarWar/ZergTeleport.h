@@ -6,18 +6,23 @@
 class CZergTeleport : public CGameNode
 {
 protected:
-	LPDIRECT3DTEXTURE9 m_pTexture; 
-	LPDIRECT3DVERTEXBUFFER9 m_pVertexBuffer; //D3D vertext buffer 
+	float m_width;
+	float m_height;
+	float m_depth;	
+	float m_rotationSpeed;
 	LPD3DXMESH m_pMesh; 
-	D3DMATERIAL9 *m_pMeshMaterials; 
+	D3DMATERIAL9 m_pMeshMaterials; 
 	unsigned long m_materialsNum; //Number of material
+	int m_generationCounter;
+	static const int GENERATION_FRAME_PERIOD = 100;
 
 public:
-	CZergTeleport(){m_type = ZERG_TELEPORT;};
+	CZergTeleport(float width, float height, float depth, float rotationSpeed);
+	
 	void Update();
 	bool InitVertices();
 	bool InitColliders();
-	
+	void Render(LPDIRECT3DDEVICE9 pd3dDevice);
 	void CollidingCallback(CGameNode *collided);
 	void CollidedCallback(CGameNode *colliding);
 };

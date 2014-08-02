@@ -16,7 +16,7 @@
 #include <vector>
 
 const float CAMERA_PITCH_LIMITATION = 0.5f;
-enum GameNodeType{HUMAN, MINE, ZERG, ZERG_TELEPORT, AIRPLANE, PLATFORM};
+enum GameNodeType{SKYBOX, TERRAIN, HUMAN, MINE, ZERG, ZERG_TELEPORT, AIRPLANE, PLATFORM, MISSILE};
 
 //Vertex containing position, normal and texture.
 struct PositionNormalTexVertex
