@@ -46,8 +46,6 @@ private:
 
 	CController *m_pController;
 
-	CTransform rootNode;	
-
 	int m_enemyResource;
 	int m_playerResource;
 	
@@ -58,6 +56,7 @@ public:
 	CStarWarScene();
 	void Update(ControllerInput &input);
 	void EventCallBack(int triggerEvent, void *trigger);
+
 
 private:
 	void CreateZergFromPool();

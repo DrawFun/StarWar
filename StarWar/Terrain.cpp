@@ -58,13 +58,13 @@ bool CTerrain::LoadHeightRaw(const LPCSTR pHeightRawFileName, LPDIRECT3DDEVICE9 
 		m_pHeightData = (char*)malloc(m_sizeX * m_sizeZ * sizeof(char));
 		memset(m_pHeightData, 0, m_sizeX * m_sizeZ * sizeof(char));
 		//Read data from file.
-		//inFile.read(m_pHeightData, m_sizeX * m_sizeZ);
-		//inFile.close();
+		inFile.read(m_pHeightData, m_sizeX * m_sizeZ);
+		inFile.close();
 		//Re-generate raw data according to height limit and base offset.
 		for(int i = 0; i < m_sizeX * m_sizeZ; ++i)
 		{
 
-			//m_pHeightData[i] %= m_heightLimit;
+			m_pHeightData[i] %= m_heightLimit;
 			m_pHeightData[i] += m_heightBase;
 		}
 		return true;

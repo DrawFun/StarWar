@@ -15,7 +15,8 @@ protected:
 	D3DXVECTOR3	m_up;      // Up Vector
 	D3DXVECTOR3	m_right;   // Right Vector
 
-	float m_missileColdDownCounter;
+	float m_missileColdDownTimer;
+	int m_rollEffectCounter;
 
 public:
 	CController(CGameNode *target);

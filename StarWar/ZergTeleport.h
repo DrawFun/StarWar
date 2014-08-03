@@ -25,6 +25,7 @@ public:
 	void Update();
 	bool InitVertices();
 	bool InitColliders();
+	CHitPoint *GetHitPoint(){return &m_hp;};
 	void Render(LPDIRECT3DDEVICE9 pd3dDevice);
 	void CollidingCallback(CGameNode *collided);
 	void CollidedCallback(CGameNode *colliding);

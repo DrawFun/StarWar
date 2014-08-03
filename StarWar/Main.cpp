@@ -1,8 +1,6 @@
 //------------------------------------------------------------------------------
 //           Name: Main.cpp
 //         Author: Dai Zhuofang
-//    Description: This sample demo of first person wandering in a world with 
-//				   snowman, terrain and skybox.
 //                 
 //   Control Keys: W          - View moves forward
 //                 S          - View moves backward
@@ -18,35 +16,31 @@
 #include "FPS.h"
 
 //------------------------------------------------------------------------------
-// GLOBALS VARIABLES
+// 全局变量
 //------------------------------------------------------------------------------
-HWND                    g_hWnd           = NULL;
-LPDIRECT3D9             g_pD3D           = NULL;
-LPDIRECT3DDEVICE9       g_pd3dDevice     = NULL;
+HWND g_hWnd = NULL;
 
-CStarWarScene *pStarWarScene = NULL;
-
-
-//Controler related variables 
+// 控制器相关变量
 POINT g_ptLastMousePosit; //Last mouse position
 POINT g_ptCurrentMousePosit; //Current mouse position
 bool g_bMousing = false; //Whether left key being clicked
-float g_fMoveSpeed = 20.0f; //Move speed
 float g_fElpasedTime; //Elapsed time between current time and last time
 double g_dCurTime; //Current time
 double g_dLastTime; //Last time
 
 //------------------------------------------------------------------------------
-// PROTOTYPES
+// 函数原型
 //------------------------------------------------------------------------------
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, 
 				   LPSTR lpCmdLine, int nCmdShow);
+
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 void init(void);
 void shutDown(void);
 void render(void);
 	CFPS GameTime;
 	char s[50];
+
 //------------------------------------------------------------------------------
 // Name: WinMain()
 // Desc: The application's entry point
@@ -78,7 +72,7 @@ int WINAPI WinMain(	HINSTANCE hInstance,
 		return E_FAIL;
 
 	g_hWnd = CreateWindowEx( NULL, "MY_WINDOWS_CLASS", 
-		                     "Snowman Wander",
+		                     "Star War",
 						     WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 					         0, 0, 1280, 900, NULL, NULL, hInstance, NULL );
 
@@ -88,11 +82,13 @@ int WINAPI WinMain(	HINSTANCE hInstance,
     ShowWindow( g_hWnd, nCmdShow );
     UpdateWindow( g_hWnd );
 	
-	//Init D3D related resource here
-	init();
-
-	
+	//Init Engine
+	CDXEngine::Instance(g_hWnd);
+	//Init Scene
+	CDXEngine::Instance()->InitScene();
+	//Init Time Ticker for FPS
 	GameTime.Start();
+
 	while( uMsg.message != WM_QUIT )
 	{
 		if( PeekMessage( &uMsg, NULL, 0, 0, PM_REMOVE ) )
@@ -107,13 +103,28 @@ int WINAPI WinMain(	HINSTANCE hInstance,
 			g_fElpasedTime = (float)((g_dCurTime - g_dLastTime) * 0.001);
 			g_dLastTime    = g_dCurTime;	
 
-			//Render current frame
-		    render();
+
+			ControllerInput input;
+			POINT mousePosit;
+			GetCursorPos(&mousePosit);
+			ScreenToClient(g_hWnd, &mousePosit);
+			input.isLButtonDown = g_bMousing;
+			input.elpasedTime = g_fElpasedTime;
+			input.currentMousePosition = mousePosit;
+			GetKeyboardState(input.keys);
+
+			CDXEngine::Instance()->Update(input);
+
+			GameTime.Tick();
+			GameTime.CalcFPS();
+			sprintf(s, "FPS: %f", GameTime.GetFPS());
+			SetWindowText(g_hWnd, s);
 		}
 	}
+
 	GameTime.Stop();
 	//Release resource and close current window
-	shutDown();
+	CDXEngine::Destroy();
 
     UnregisterClass( "MY_WINDOWS_CLASS", winClass.hInstance );
 
@@ -164,6 +175,7 @@ LRESULT CALLBACK WindowProc( HWND   hWnd,
 		case WM_MOUSEMOVE:
 					
 		{
+			//限制鼠标移动
 			RECT rec;
 			GetWindowRect(g_hWnd, &rec);
 			ClipCursor(&rec);
@@ -186,89 +198,3 @@ LRESULT CALLBACK WindowProc( HWND   hWnd,
 
 	return 0;
 }
-
-//------------------------------------------------------------------------------
-// Name: init()
-// Desc: Init the scene
-//------------------------------------------------------------------------------
-void init( void )
-{
-	CDXEngine::Instance(g_hWnd);
-	g_pD3D = CDXEngine::Instance()->GetDx();
-	g_pd3dDevice = CDXEngine::Instance()->GetDxDevice();
-	//Set samplers
-	g_pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	g_pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-
-	//Project models
-	D3DXMATRIX matProj;
-
-    g_pd3dDevice->SetTransform( D3DTS_PROJECTION, &matProj );
-    D3DXMatrixPerspectiveFovLH( &matProj, D3DXToRadian( 45.0f ), 
-                                1280.0f / 900.0f, 0.1f, 200.0f );
-    g_pd3dDevice->SetTransform( D3DTS_PROJECTION, &matProj );
-
-	//Full of white light
-	g_pd3dDevice->SetRenderState(D3DRS_AMBIENT, 
-		0xffffffff);
-
-	pStarWarScene = new CStarWarScene();
-}
-
-//------------------------------------------------------------------------------
-// Name: shutDown()
-// Desc: release resources and close window
-//------------------------------------------------------------------------------
-void shutDown( void )
-{
-
-	CDXEngine::Destroy();
-}
-
-//------------------------------------------------------------------------------
-// Name: render()
-// Desc: Render current frame
-//------------------------------------------------------------------------------
-void render( void )
-{
-
-	//Clear to the background
-    g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
-                         D3DCOLOR_COLORVALUE(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, 0 );
-
-	//Get last input and update the view matrix
-	//camera->GetRealTimeUserInput(g_bMousing, g_fElpasedTime);
-
-		//Get current mouse position
-	POINT mousePosit;
-	GetCursorPos(&mousePosit);
-	ScreenToClient(g_hWnd, &mousePosit);
-		//Get ket input
-	
-
-	ControllerInput input;
-	input.isLButtonDown = g_bMousing;
-	input.elpasedTime = g_fElpasedTime;
-	input.currentMousePosition = mousePosit;
-	GetKeyboardState(input.keys);
-
-	//updateViewMatrix();
-
-	//Draw skybox, terrain and snowman
-    g_pd3dDevice->BeginScene();	
-	pStarWarScene->Update(input);
-			GameTime.Tick();
-			GameTime.CalcFPS();
-			sprintf(s, "FPS: %f.", GameTime.GetFPS());
-			SetWindowText(g_hWnd, s);
-	//Init and set world matrix
-	D3DXMATRIX matWorld;
-	D3DXMatrixScaling(&matWorld, 1.0f, 1.0f, 1.0f);
-    g_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
-
-	
-
-    g_pd3dDevice->EndScene();
-    g_pd3dDevice->Present( NULL, NULL, NULL, NULL );
-}
-

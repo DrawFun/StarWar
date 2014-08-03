@@ -1,5 +1,4 @@
 #include "Player.h"
-#include "Platform.h"
 
 CPlayer::CPlayer() 
 {
@@ -11,10 +10,19 @@ CPlayer::CPlayer()
 	m_enableRender = true;
 	m_isControlable = true; 
 	m_isFlyable = false;
+	m_onPlatform = false;
 }
 
 void CPlayer::Update()
 {
+	//没有碰撞分离的Trigger
+	//通过和平台的距离判定是否在平台上
+	//提升处理效率
+	if(m_onPlatform && D3DXVec3Length(&m_transform.GetPosition()) > 20 / 1.414)
+	{
+		m_onPlatform = false;
+		m_transform.ResetTransform(GetScene()->GetRootNode());
+	}
 }
 
 void CPlayer::Render(LPDIRECT3DDEVICE9 pd3dDevice)
@@ -61,25 +69,25 @@ bool CPlayer::InitColliders()
 
 void CPlayer::CollidingCallback(CGameNode *collided)
 {
-	AllocConsole();
-	_cprintf("%d->%d\n", this->m_type, collided->GetType());
 	switch(collided->GetType())
 	{
 	case ZERG:
 		m_hp.Damage(ZERG_DAMAGE);
+		collided->CollidedCallback(this);
 		if(m_hp.IsDead())
 		{
 			m_scene->EventCallBack(STARWAR_DESTROY, this);
 		}
 		break;
-	case PLATFORM:
-		m_transform.Translate(D3DXVECTOR3(0, dynamic_cast<CPlatform *> (collided)->GetHeight(), 0));		
+	case PLATFORM:			
 		collided->GetTransform()->AddChild(&m_transform);
+		m_onPlatform = true;
 		break;
 	case AIRPLANE:	
 		this->SwitchRender(false);
 		this->SwitchPhysics(false);
 		m_scene->EventCallBack(STARWAR_IN_AIRPLANE, collided);
+		m_onPlatform = false;
 		break;
 	case ZERG_TELEPORT:
 		break;
@@ -90,6 +98,10 @@ void CPlayer::CollidingCallback(CGameNode *collided)
 	
 
 void CPlayer::CollidedCallback(CGameNode *colliding)
-{
-
+{	
+	//当前未定义行为
+	//如被撞击的逻辑写在主动撞击中（撞击是相互的，因此两个挑一个进行处理）
+	//该接口尚保留，若碰撞检测开销过大，可以改成单方向判定，而非如今的双层循环（存在一半冗余）
+	
+	//已经改为单向判定，但没时间删接口了，先文档先T_T
 }

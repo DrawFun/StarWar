@@ -9,7 +9,7 @@ CStarWarScene::CStarWarScene()
 	CDXEngine::Instance()->GetDxDevice()->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS,TRUE);
 
 	m_pSkyBox = new CSkyBox();
-	m_pTerrain = new CTerrain(300, 300, -150, -150, 2, -2, 64);
+	m_pTerrain = new CTerrain(300, 300, -150, -150, 2, -2, 16);
 	
 	m_pPlayer = new CPlayer();
 	CTransform playerTramsform(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
@@ -139,9 +139,11 @@ void CStarWarScene::CreateMissileFromPool()
 	for(int i = 0; i < MAX_MISSILE_NUM; ++i)
 	{
 		if(!m_pArrayMissile[i]->IsAlive())
-		{			
+		{	
 			m_pArrayMissile[i]->GetTransform()->SetPosition
 				(m_pController->GetControllerTarget()->GetTransform()->GetPosition());
+			m_pArrayMissile[i]->GetTransform()->SetWorldPosition
+				(m_pController->GetControllerTarget()->GetTransform()->GetWorldPosition());
 			m_pArrayMissile[i]->GetTransform()->SetRotation
 				(m_pController->GetControllerTarget()->GetTransform()->GetRotation());
 			m_pArrayMissile[i]->SetAlive();
@@ -185,6 +187,8 @@ void CStarWarScene::Update(ControllerInput &input)
 
 void CStarWarScene::EventCallBack(int triggerEvent, void *trigger)
 {
+	CGameNode *pGameNode;
+	D3DXVECTOR3 adjustRotation;
 	switch(triggerEvent)
 	{
 	case STARWAR_CREATE:
@@ -206,10 +210,12 @@ void CStarWarScene::EventCallBack(int triggerEvent, void *trigger)
 		case ZERG_TELEPORT:
 		case ZERG:
 			--m_enemyResource;
+			m_enemyResource = max(!m_pZergTeleport->GetHitPoint()->IsDead(), m_enemyResource);
 			break;
 		case HUMAN:
 		case MINE:
 			--m_playerResource;
+			m_playerResource = max(!m_pPlayer->GetHitPoint()->IsDead(), m_playerResource);
 			break;
 		default:
 			break;
@@ -221,9 +227,13 @@ void CStarWarScene::EventCallBack(int triggerEvent, void *trigger)
 		m_pMainCamera->SwitchTarget((CGameNode *)trigger);
 		break;
 	case STARWAR_OUT_AIRPLANE:
-		m_pPlayer->GetTransform()->SetWorldPosition(((CGameNode *)trigger)->GetTransform()->GetWorldPosition() + D3DXVECTOR3(10, 0, 10));
-		m_pPlayer->GetTransform()->SetRotation(((CGameNode *)trigger)->GetTransform()->GetRotation());
-		rootNode.AddChild(((CGameNode *)trigger)->GetTransform());		
+		pGameNode = (CGameNode *)trigger;
+		m_pPlayer->GetTransform()->SetWorldPosition(pGameNode->GetTransform()->GetWorldPosition() + D3DXVECTOR3(10, 0, 10));
+		adjustRotation = pGameNode->GetTransform()->GetRotation();
+		adjustRotation.z = 0;
+		m_pPlayer->GetTransform()->SetRotation(adjustRotation);
+		pGameNode->GetTransform()->SetRotation(D3DXVECTOR3(0,0,0));
+
 		rootNode.AddChild(m_pPlayer->GetTransform());
 		m_pPlayer->SwitchRender(true);
 		m_pPlayer->SwitchPhysics(true);
@@ -237,12 +247,24 @@ void CStarWarScene::EventCallBack(int triggerEvent, void *trigger)
 
 void CStarWarScene::WinOrLose()
 {
+	RECT rect = {20, 20, 300, 200};	
+	char buffer[200];
+	int length;
+
 	if(m_pPlayer->GetHitPoint()->IsDead())
 	{
-		;
+		length = sprintf_s(buffer, "Lose...\nHuman HP: %d\nHuman Units: %d\nEnemy Units: %d\n", 
+			m_pPlayer->GetHitPoint()->GetCurrentHP(), m_playerResource, m_enemyResource);
 	}
-	if(m_enemyResource == 0)
+	else if(m_enemyResource == 0)
 	{
-		;
+		length = sprintf_s(buffer, "Win!!!\nHuman HP: %d\nHuman Units: %d\nEnemy Units: %d\n", 
+			m_pPlayer->GetHitPoint()->GetCurrentHP(), m_playerResource, m_enemyResource);
 	}
+	else
+	{
+		length = sprintf_s(buffer, "Battling\nHuman HP: %d\nHuman Units: %d\nEnemy Units: %d\n", 
+			m_pPlayer->GetHitPoint()->GetCurrentHP(), m_playerResource, m_enemyResource);
+	}
+	CDXEngine::Instance()->GetFont()->DrawTextA(NULL, buffer, length, &rect, DT_TOP | DT_LEFT, 0xffffffff);
 }

@@ -5,7 +5,8 @@
 CController::CController(CGameNode *target)
 {
 	m_target = NULL;
-	m_missileColdDownCounter = 0;
+	m_missileColdDownTimer = 0;
+	m_rollEffectCounter = 0;
 	SwitchController(target);
 	AdjustTransform();
 }
@@ -32,7 +33,7 @@ void CController::Control(const ControllerInput &input)
 	float moveSpeed = m_target->GetMoveSpeed();
 	m_position = m_target->GetTransform()->GetPosition();
 	m_rotation = m_target->GetTransform()->GetRotation();
-	float xAngle = 0, yAngle = 0;
+	float xAngle = 0, yAngle = 0, zAngle = 0;
 	POINT ptCurrentMousePosit;
 	ptCurrentMousePosit.x = input.currentMousePosition.x;
     ptCurrentMousePosit.y = input.currentMousePosition.y;
@@ -60,10 +61,14 @@ void CController::Control(const ControllerInput &input)
 		if(nXDiff != 0)
 		{
 			yAngle = D3DXToRadian((float)nXDiff / 6.0f);
-			//m_target->Yaw(yAngle);
 			D3DXMatrixRotationAxis( &matRotation, &D3DXVECTOR3(0,1,0), yAngle);		
 			D3DXVec3TransformCoord( &m_look, &m_look, &matRotation );
 			D3DXVec3TransformCoord( &m_up, &m_up, &matRotation );
+		}
+
+		if(m_target->IsFlyable())
+		{
+			zAngle += xAngle / 2;
 		}
     }
 
@@ -97,10 +102,10 @@ void CController::Control(const ControllerInput &input)
 	// Right Arrow Key - View side-steps or strafes to the right
 	if( input.keys['T'] & 0x80 )
 	{
-		m_missileColdDownCounter += input.elpasedTime;
-		if(m_target->GetType() == GameNodeType::AIRPLANE && m_missileColdDownCounter > 0.1)
+		m_missileColdDownTimer += input.elpasedTime;
+		if(m_target->GetType() == GameNodeType::AIRPLANE && m_missileColdDownTimer > 0.1)
 		{
-			m_missileColdDownCounter = 0;
+			m_missileColdDownTimer = 0;
 			m_target->GetScene()->EventCallBack(STARWAR_CREATE, m_target);
 		}
 	}
@@ -110,7 +115,9 @@ void CController::Control(const ControllerInput &input)
 	m_position = attemptPosition;
 	m_target->GetTransform()->SetPosition(m_position);
 
-	m_rotation += D3DXVECTOR3(xAngle, yAngle, 0);
+	m_rotation += D3DXVECTOR3(xAngle, yAngle, zAngle);
+
+
 	Util::Clip(-CAMERA_PITCH_LIMITATION, CAMERA_PITCH_LIMITATION, m_rotation.x);
 	m_target->GetTransform()->SetRotation(m_rotation);
 	AdjustTransform();

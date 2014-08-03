@@ -83,9 +83,9 @@ void CZerg::CollidingCallback(CGameNode *collided)
 	{
 	case HUMAN:
 	case MINE:		
-		m_scene->EventCallBack(STARWAR_DESTROY, this);
-		m_hp.Reborn();
 		Recycle();
+		m_hp.Reborn();
+		m_scene->EventCallBack(STARWAR_DESTROY, this);		
 		break;
 	case MISSILE:
 		m_hp.Damage(MISSILE_DAMAGE);
@@ -116,9 +116,9 @@ void CZerg::CollidedCallback(CGameNode *colliding)
 		break;
 	case MINE:		
 	case HUMAN:
-		m_scene->EventCallBack(STARWAR_DESTROY, this);
-		m_hp.Reborn();
 		Recycle();
+		m_hp.Reborn();
+		m_scene->EventCallBack(STARWAR_DESTROY, this);
 		break;
 	default:
 		break;

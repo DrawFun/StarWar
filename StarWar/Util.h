@@ -16,10 +16,18 @@
 #include <vector>
 #include <list>
 
+//封装常用变量和函数
+
+//镜头X轴旋转限制
 const float CAMERA_PITCH_LIMITATION = 0.5f;
+
+//游戏物件类型
 enum GameNodeType{SKYBOX, TERRAIN, HUMAN, MINE, ZERG, ZERG_TELEPORT, AIRPLANE, PLATFORM, MISSILE, LENGTH};
 
+//回调事件类型
 enum StarWarSceneEvent{STARWAR_CREATE, STARWAR_DESTROY, STARWAR_IN_AIRPLANE, STARWAR_OUT_AIRPLANE};
+
+//伤害值
 const int MISSILE_DAMAGE = 200;
 const int ZERG_DAMAGE = 20;
 
@@ -84,6 +92,7 @@ struct PositionNormalSpecularColorTexVertex
 		_nx(nx), _ny(ny), _nz(nz), _color(color), _tx(tx), _ty(ty){}
 };
 
+//输入集合
 struct ControllerInput
 {
 	bool isLButtonDown;

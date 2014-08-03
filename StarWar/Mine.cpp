@@ -2,6 +2,7 @@
 
 CMine::CMine(float rotateSpeed = 0) : m_rotateSpeed(rotateSpeed) 
 {
+	m_hp = CHitPoint(20);
 	m_type = MINE;	
 	m_enableControl = false;
 	m_enablePhysics = true;

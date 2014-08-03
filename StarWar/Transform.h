@@ -1,9 +1,10 @@
 #ifndef _STARWAR_TRANSFORM_H_
 #define _STARWAR_TRANSFORM_H_
 
-#include "DXEngine.h"
 #include <list>
 #include <math.h>
+#include <d3d9.h>
+#include <d3dx9.h>
 
 class CTransform
 {
@@ -62,13 +63,13 @@ public:
 		double test = q.x*q.y + q.z*q.w;
 		if (test > 0.499) { // singularity at north pole
 			ret.y = 2 * atan2(q.x,q.w);
-			ret.z = 1.57079632679489661923;
+			ret.z = 1.57079632679489661923; //二分之一的圆周率
 			ret.x = 0;
 			return ret;
 		}
 		if (test < -0.499) { // singularity at south pole
 			ret.y = -2 * atan2(q.x,q.w);
-			ret.z = -1.57079632679489661923;
+			ret.z = -1.57079632679489661923; //二分之一的圆周率
 			ret.x = 0;
 			return ret;
 		}

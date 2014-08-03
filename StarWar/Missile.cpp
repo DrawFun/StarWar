@@ -99,4 +99,5 @@ void CMissile::CollidingCallback(CGameNode *collided)
 
 void CMissile::CollidedCallback(CGameNode *colliding)
 {
+	//当前未定义行为
 }

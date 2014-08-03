@@ -1,7 +1,5 @@
 #include "FPS.h"
 
-#pragma comment(lib, "winmm.lib")
-
 CFPS::CFPS(void) : m_totalTicks(0.0f),
                              m_totalGameTime(0.0f),
                              m_elapsedGameTime(0.0f),

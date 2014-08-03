@@ -72,25 +72,10 @@ bool CPlatform::InitColliders()
 
 void CPlatform::CollidingCallback(CGameNode *collided)
 {
-	//AllocConsole();
-	//_cprintf("%d->%d\n", this->m_type, collided->GetType());
+	//当前未定义行为
 }
 
 void CPlatform::CollidedCallback(CGameNode *colliding)
 {
-	//AllocConsole();
-	//_cprintf("%d<-%d\n", this->m_type, colliding->GetType());
-	switch(colliding->GetType())
-	{
-	case PLATFORM:		
-		break;
-	case HUMAN:
-	case ZERG:
-		break;
-	case ZERG_TELEPORT:
-	case MINE:
-		break;
-	default:
-		break;
-	}
+	//当前未定义行为
 }
