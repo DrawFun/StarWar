@@ -3,6 +3,7 @@
 
 CPlayer::CPlayer() 
 {
+	m_hp = CHitPoint(100);
 	m_type = HUMAN; 
 	m_moveSpeed = 20.0f;
 	m_enableControl = false;
@@ -44,15 +45,16 @@ bool CPlayer::InitVertices()
 
 bool CPlayer::InitColliders()
 {
-	D3DXVECTOR3 pMin, pMax;
+	D3DXVECTOR3 pCenter;
+	float pRadius;
 	D3DVERTEXELEMENT9 decl[MAX_FVF_DECL_SIZE];
-	m_pMesh->GetDeclaration( decl );
+	m_pMesh->GetDeclaration(decl);
 	LPVOID pVB;
-	m_pMesh->LockVertexBuffer( D3DLOCK_READONLY, &pVB );
-	UINT uStride = D3DXGetDeclVertexSize( decl, 0 );
-	D3DXComputeBoundingBox(( const D3DXVECTOR3* )pVB, m_pMesh->GetNumVertices(), uStride, &pMin, &pMax);		
-	Collider col(pMin, pMax);
-	m_colliders.push_back(col);
+	m_pMesh->LockVertexBuffer(D3DLOCK_READONLY, &pVB);
+	UINT uStride = D3DXGetDeclVertexSize(decl, 0);	
+	D3DXComputeBoundingSphere((const D3DXVECTOR3* )pVB, m_pMesh->GetNumVertices(), uStride, &pCenter, &pRadius);
+	Collider collider(pCenter, pRadius);
+	m_colliders.push_back(collider);
 	return true;
 }
 
@@ -63,25 +65,23 @@ void CPlayer::CollidingCallback(CGameNode *collided)
 	_cprintf("%d->%d\n", this->m_type, collided->GetType());
 	switch(collided->GetType())
 	{
-	case HUMAN:
-		break;
 	case ZERG:
-	case ZERG_TELEPORT:
-		//m_transform.Translate(D3DXVECTOR3(0, dynamic_cast<CPlatform *> (collided)->GetHeight(), 0));			
-		//collided->GetTransform()->AddChild(&m_transform);
-		break;
-	case MINE:
+		m_hp.Damage(ZERG_DAMAGE);
+		if(m_hp.IsDead())
+		{
+			m_scene->EventCallBack(STARWAR_DESTROY, this);
+		}
 		break;
 	case PLATFORM:
-		//m_transform.Translate(D3DXVECTOR3(0, dynamic_cast<CPlatform *> (collided)->GetHeight(), 0));	
+		m_transform.Translate(D3DXVECTOR3(0, dynamic_cast<CPlatform *> (collided)->GetHeight(), 0));		
 		collided->GetTransform()->AddChild(&m_transform);
 		break;
-	case AIRPLANE:
-		m_transform.AddChild(collided->GetTransform());
+	case AIRPLANE:	
 		this->SwitchRender(false);
 		this->SwitchPhysics(false);
-		//collided->GetTransform()->AddChild(&m_transform);
-		
+		m_scene->EventCallBack(STARWAR_IN_AIRPLANE, collided);
+		break;
+	case ZERG_TELEPORT:
 		break;
 	default:
 		break;
@@ -91,6 +91,5 @@ void CPlayer::CollidingCallback(CGameNode *collided)
 
 void CPlayer::CollidedCallback(CGameNode *colliding)
 {
-	AllocConsole();
-	_cprintf("%d<-%d\n", this->m_type, colliding->GetType());
+
 }

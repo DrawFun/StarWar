@@ -15,7 +15,11 @@ protected:
 	float m_radius;
 
 public:
-	Collider(D3DXVECTOR3 &pMin, D3DXVECTOR3 &pMax) : m_type(BOX_COLLIDER), m_pMin(pMin), m_pMax(pMax){};
+	Collider(D3DXVECTOR3 &pMin, D3DXVECTOR3 &pMax) : m_type(BOX_COLLIDER), m_pMin(pMin), m_pMax(pMax)
+	{
+		m_radius = D3DXVec3Length(&(m_pMax - m_pMin)) / 2;
+	};
+
 	Collider(D3DXVECTOR3 &pCenter, float radius) : m_type(SPHERE_COLLIDER), m_pCenter(pCenter), m_radius(radius){};
 
 	static bool IsCollision(std::vector<Collider> colliders1, std::vector<Collider> colliders2, 
@@ -38,8 +42,13 @@ private:
 	static bool IsCollision(Collider *collider1, Collider *collider2, 
 		D3DXVECTOR3 position1, D3DXVECTOR3 position2)
 	{
+		float centerDistance = D3DXVec3Length(&(position1 - position2));
+		if(centerDistance > collider1->m_radius + collider2->m_radius)
+		{
+			return false;
+		}
 		if(collider1->m_type == BOX_COLLIDER && collider2->m_type == BOX_COLLIDER)
-		{			
+		{	
 			RECT r1, r2, r3, r4, r5, r6;
 			D3DXVECTOR3 c1PMin = collider1->m_pMin + position1;
 			D3DXVECTOR3 c1PMax = collider1->m_pMax + position1;
@@ -58,16 +67,11 @@ private:
 		}
 		else if(collider1->m_type == SPHERE_COLLIDER && collider2->m_type == SPHERE_COLLIDER)
 		{
-
+			return (centerDistance <= collider1->m_radius + collider2->m_radius);			
 		}
 		else
 		{
-			if(collider1->m_type == SPHERE_COLLIDER)
-			{
-				Collider *tmpCollider = collider1;
-				collider1 = collider2;
-				collider2 = tmpCollider;
-			}
+			return (centerDistance <= collider1->m_radius + collider2->m_radius);
 		}
 
 		return false;
@@ -79,11 +83,6 @@ private:
 		{
 			return true;
 		}
-		return false;
-	}
-
-	static inline bool IsCircleInsection()
-	{				
 		return false;
 	}
 };

@@ -45,7 +45,8 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 void init(void);
 void shutDown(void);
 void render(void);
-
+	CFPS GameTime;
+	char s[50];
 //------------------------------------------------------------------------------
 // Name: WinMain()
 // Desc: The application's entry point
@@ -89,8 +90,7 @@ int WINAPI WinMain(	HINSTANCE hInstance,
 	
 	//Init D3D related resource here
 	init();
-	CFPS GameTime;
-	char s[20];
+
 	
 	GameTime.Start();
 	while( uMsg.message != WM_QUIT )
@@ -106,10 +106,7 @@ int WINAPI WinMain(	HINSTANCE hInstance,
 			g_dCurTime     = timeGetTime();
 			g_fElpasedTime = (float)((g_dCurTime - g_dLastTime) * 0.001);
 			g_dLastTime    = g_dCurTime;	
-			GameTime.Tick();
-			GameTime.CalcFPS();
-			sprintf(s, "FPS: %f", GameTime.GetFPS());
-			SetWindowText(g_hWnd, s);
+
 			//Render current frame
 		    render();
 		}
@@ -260,7 +257,10 @@ void render( void )
 	//Draw skybox, terrain and snowman
     g_pd3dDevice->BeginScene();	
 	pStarWarScene->Update(input);
-
+			GameTime.Tick();
+			GameTime.CalcFPS();
+			sprintf(s, "FPS: %f.", GameTime.GetFPS());
+			SetWindowText(g_hWnd, s);
 	//Init and set world matrix
 	D3DXMATRIX matWorld;
 	D3DXMatrixScaling(&matWorld, 1.0f, 1.0f, 1.0f);

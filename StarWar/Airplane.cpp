@@ -8,6 +8,8 @@ CAirplane::CAirplane()
 	m_enableRender = true;
 	m_isControlable = true; 
 	m_isFlyable = true;	
+	m_moveSpeed = 20.0f;
+	m_isFlying = false;
 }
 
 void CAirplane::Render(LPDIRECT3DDEVICE9 pd3dDevice)
@@ -25,7 +27,16 @@ void CAirplane::Render(LPDIRECT3DDEVICE9 pd3dDevice)
 
 void CAirplane::Update()
 {
-	
+	if(m_enableControl && m_transform.GetWorldPosition().y > 1)
+	{
+		m_isFlying = true;
+	}
+
+	if(m_isFlying && m_transform.GetWorldPosition().y < 1)
+	{
+		m_scene->EventCallBack(STARWAR_OUT_AIRPLANE, this);
+		m_isFlying = false;
+	}
 }
 	
 bool CAirplane::InitVertices()
@@ -56,22 +67,35 @@ bool CAirplane::InitVertices()
 
 bool CAirplane::InitColliders()
 {
-	D3DXVECTOR3 pMin, pMax;
+	D3DXVECTOR3 pCenter;
+	float pRadius;
 	D3DVERTEXELEMENT9 decl[MAX_FVF_DECL_SIZE];
-	m_pMesh->GetDeclaration( decl );
+	m_pMesh->GetDeclaration(decl);
 	LPVOID pVB;
-	m_pMesh->LockVertexBuffer( D3DLOCK_READONLY, &pVB );
-	UINT uStride = D3DXGetDeclVertexSize( decl, 0 );
-	D3DXComputeBoundingBox(( const D3DXVECTOR3* )pVB, m_pMesh->GetNumVertices(), uStride, &pMin, &pMax);		
-	Collider col(pMin, pMax);
-	m_colliders.push_back(col);
+	m_pMesh->LockVertexBuffer(D3DLOCK_READONLY, &pVB);
+	UINT uStride = D3DXGetDeclVertexSize(decl, 0);	
+	D3DXComputeBoundingSphere((const D3DXVECTOR3* )pVB, m_pMesh->GetNumVertices(), uStride, &pCenter, &pRadius);
+	//TODO:目前假设球体三个方向scale值相等
+	pRadius *= m_transform.GetScale().x;
+	Collider collider(pCenter, pRadius);
+	m_colliders.push_back(collider);
 	return true;
 }
 
 void CAirplane::CollidingCallback(CGameNode *collided)
 {
-	//AllocConsole();
-	//_cprintf("%d->%d\n", this->m_type, collided->GetType());
+	switch(collided->GetType())
+	{
+	case PLATFORM:	
+		if(m_isFlying)
+		{		
+			collided->GetTransform()->AddChild(&m_transform);
+		}
+		break;
+	default:
+		break;
+	}
+
 }
 
 void CAirplane::CollidedCallback(CGameNode *colliding)
@@ -80,7 +104,8 @@ void CAirplane::CollidedCallback(CGameNode *colliding)
 	//_cprintf("%d<-%d\n", this->m_type, colliding->GetType());
 	switch(colliding->GetType())
 	{
-	case PLATFORM:		
+	case PLATFORM:	
+
 		break;
 	case HUMAN:		
 		break;

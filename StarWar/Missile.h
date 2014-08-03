@@ -6,18 +6,18 @@
 class CMissile : public CTargetedBullet
 {
 protected:
-	float m_width;
-	float m_height;
-	float m_depth;	
+	float m_radius1;
+	float m_radius2;
+	float m_length;	
 	LPD3DXMESH m_pMesh; 
 	D3DMATERIAL9 m_pMeshMaterials; 
 	unsigned long m_materialsNum; //Number of material
 
 	int m_destroyCounter;
-	static const int DESTROY_FRAME_PERIOD = 10000;
+	static const long long DESTROY_FRAME_PERIOD = 1000;
 	
 public:
-	CMissile(float width, float height, float depth, float moveSpeed, CGameNode *target);
+	CMissile(float radius1, float radius2, float length, float moveSpeed, CGameNode *target);
 	void SetAlive();
 
 	void Update();

@@ -2,12 +2,14 @@
 #define _STARWAR_MINE_H_
 
 #include "GameNode.h"
+#include "HitPoint.h"
 
 class CMine : public CGameNode
 {
 protected:
+	CHitPoint m_hp;
 	float m_rotateSpeed;
-	LPD3DXMESH pSnowmanMesh;
+	LPD3DXMESH m_pMesh;
 	D3DMATERIAL9 *pSnowmanMeshMaterials;
 	unsigned long snowManNumMaterials;
 	LPDIRECT3DTEXTURE9 pSnowmanTexture0;

@@ -2,12 +2,10 @@
 #include "Mine.h"
 #include "Platform.h"
 
-//extern CMine *mine;
-//extern CPlatform *platform;
-
 CController::CController(CGameNode *target)
 {
 	m_target = NULL;
+	m_missileColdDownCounter = 0;
 	SwitchController(target);
 	AdjustTransform();
 }
@@ -95,6 +93,18 @@ void CController::Control(const ControllerInput &input)
 	// Right Arrow Key - View side-steps or strafes to the right
 	if( input.keys['D'] & 0x80 )
 		attemptPosition += (m_right * moveSpeed) * input.elpasedTime;
+
+	// Right Arrow Key - View side-steps or strafes to the right
+	if( input.keys['T'] & 0x80 )
+	{
+		m_missileColdDownCounter += input.elpasedTime;
+		if(m_target->GetType() == GameNodeType::AIRPLANE && m_missileColdDownCounter > 0.1)
+		{
+			m_missileColdDownCounter = 0;
+			m_target->GetScene()->EventCallBack(STARWAR_CREATE, m_target);
+		}
+	}
+
 	Util::Clip(0, 2048, attemptPosition.y);
 
 	m_position = attemptPosition;

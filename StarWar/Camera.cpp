@@ -19,6 +19,11 @@ CCamera::CCamera(CGameNode *target, D3DXVECTOR3 &position)
 	m_offsetPosition = position;    
 }
 
+void CCamera::SwitchTarget(CGameNode *target)
+{	
+	this->m_target = target;    
+}
+
 void CCamera::UpdateViewMatrix()
 {
 	D3DXMATRIX view;
@@ -48,6 +53,7 @@ void CCamera::UpdateViewMatrix()
 	D3DXVec3Normalize( &m_offsetPosition1, &m_offsetPosition1 );
 
 	eye = m_target->GetTransform()->GetWorldPosition() + m_offsetPosition1 * 50;
+	Util::Clip(0, 2048, eye.y);
 	m_position = eye;
 	D3DXMatrixLookAtLH(&view, &eye, &m_target->GetTransform()->GetWorldPosition(), &m_up);
 

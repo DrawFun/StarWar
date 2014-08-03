@@ -26,6 +26,7 @@ protected:
 public:
 	D3DXVECTOR3 GetPosition(){return m_position;};
 	CCamera(CGameNode *target, D3DXVECTOR3 &position);
+	void SwitchTarget(CGameNode *target);
 	void LateUpdate();
 };
 

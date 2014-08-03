@@ -11,6 +11,7 @@ protected:
 	LPD3DXMESH m_pMesh; 
 	D3DMATERIAL9 *m_pMeshMaterials; 
 	unsigned long m_materialsNum; //Number of material
+	bool m_isFlying;
 
 public:
 	CAirplane();

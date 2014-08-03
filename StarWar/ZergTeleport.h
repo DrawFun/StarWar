@@ -2,10 +2,13 @@
 #define _STARWAR_ZERGTELEPORT_H_
 
 #include "GameNode.h"
+#include "HitPoint.h"
 
 class CZergTeleport : public CGameNode
 {
 protected:
+	CHitPoint m_hp;
+
 	float m_width;
 	float m_height;
 	float m_depth;	
@@ -14,7 +17,7 @@ protected:
 	D3DMATERIAL9 m_pMeshMaterials; 
 	unsigned long m_materialsNum; //Number of material
 	int m_generationCounter;
-	static const int GENERATION_FRAME_PERIOD = 100;
+	static const int GENERATION_FRAME_PERIOD = 200;
 
 public:
 	CZergTeleport(float width, float height, float depth, float rotationSpeed);

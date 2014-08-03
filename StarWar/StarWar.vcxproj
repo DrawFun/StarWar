@@ -82,7 +82,6 @@
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Platform.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="StarWarScene.cpp" />
@@ -93,6 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Airplane.h" />
+    <ClInclude Include="HitPoint.h" />
     <ClInclude Include="PhysicsNode.h" />
     <ClInclude Include="TargetedBullet.h" />
     <ClInclude Include="Camera.h" />

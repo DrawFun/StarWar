@@ -1,7 +1,7 @@
 #include "Missile.h"
 
-CMissile::CMissile(float width, float height, float depth, float moveSpeed, CGameNode *target) : 
-		m_width(width), m_height(height), m_depth(depth), CTargetedBullet(target)
+CMissile::CMissile(float radius1, float radius2, float length, float moveSpeed, CGameNode *target) : 
+		m_radius1(radius1), m_radius2(radius2), m_length(length), CTargetedBullet(target)
 {
 	m_type = MISSILE; 	
 	m_moveSpeed = moveSpeed;
@@ -10,6 +10,7 @@ CMissile::CMissile(float width, float height, float depth, float moveSpeed, CGam
 	m_enableRender = true;
 	m_isControlable = true; 
 	m_isFlyable = true;
+	m_destroyCounter = 0; 
 }
 
 void CMissile::SetAlive()
@@ -39,7 +40,6 @@ void CMissile::Update()
 	{
 		if(m_destroyCounter < DESTROY_FRAME_PERIOD)
 		{
-			//m_transform.Yaw(m_rotationSpeed);
 			++m_destroyCounter;
 		}
 		else
@@ -55,7 +55,7 @@ bool CMissile::InitVertices()
 {
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
 
-	D3DXCreateCylinder(pd3dDevice, 0.5, 0.05, 1, 10, 10, &m_pMesh, NULL);
+	D3DXCreateCylinder(pd3dDevice, m_radius1, m_radius2, m_length, 10, 10, &m_pMesh, NULL);
 	ZeroMemory(&m_pMeshMaterials, sizeof(D3DMATERIAL9));
 	m_pMeshMaterials.Diffuse.r = 0;
 	m_pMeshMaterials.Diffuse.g = 0;
@@ -70,39 +70,33 @@ bool CMissile::InitVertices()
 
 bool CMissile::InitColliders()
 {
-	D3DXVECTOR3 pMin, pMax;
+	D3DXVECTOR3 pCenter;
+	float pRadius;
 	D3DVERTEXELEMENT9 decl[MAX_FVF_DECL_SIZE];
-	m_pMesh->GetDeclaration( decl );
+	m_pMesh->GetDeclaration(decl);
 	LPVOID pVB;
-	m_pMesh->LockVertexBuffer( D3DLOCK_READONLY, &pVB );
-	UINT uStride = D3DXGetDeclVertexSize( decl, 0 );
-	D3DXComputeBoundingBox(( const D3DXVECTOR3* )pVB, m_pMesh->GetNumVertices(), uStride, &pMin, &pMax);		
-	Collider col(pMin, pMax);
-	m_colliders.push_back(col);
+	m_pMesh->LockVertexBuffer(D3DLOCK_READONLY, &pVB);
+	UINT uStride = D3DXGetDeclVertexSize(decl, 0);	
+	D3DXComputeBoundingSphere((const D3DXVECTOR3* )pVB, m_pMesh->GetNumVertices(), uStride, &pCenter, &pRadius);
+	Collider collider(pCenter, pRadius);
+	m_colliders.push_back(collider);
 	return true;
 }
 
 void CMissile::CollidingCallback(CGameNode *collided)
 {
-	AllocConsole();
-	_cprintf("Missile colliding\n");
+	switch(collided->GetType())
+	{
+	case ZERG:	
+	case ZERG_TELEPORT:
+		Recycle();
+		m_scene->EventCallBack(STARWAR_DESTROY, this);
+		break;
+	default:
+		return;
+	}
 }
 
 void CMissile::CollidedCallback(CGameNode *colliding)
 {
-	AllocConsole();
-	_cprintf("Missile collided\n");
-	switch(colliding->GetType())
-	{
-	case PLATFORM:		
-		break;
-	case HUMAN:
-	case ZERG:
-		break;
-	case ZERG_TELEPORT:
-	case MINE:
-		break;
-	default:
-		break;
-	}
 }

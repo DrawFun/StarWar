@@ -4,6 +4,7 @@
 #include "GameNode.h"
 #include <list>
 
+#include "Physics.h"
 #include "SkyBox.h"
 #include "Terrain.h"
 #include "Camera.h"
@@ -27,6 +28,8 @@ private:
 	static const int MAX_ZERG_NUM = 5;
 	static const int MAX_MISSILE_NUM = 10;
 
+	CPhysics *m_pPhysics;
+
 	//Skybox pointer
 	CSkyBox *m_pSkyBox;
 	//Terrain pointer
@@ -39,11 +42,14 @@ private:
 	CMine *m_pArrayMine[MINE_NUM];
 	CAirplane *m_pArrayAirplane[AIRPLANE_NUM];
 	CZerg *m_pArrayZerg[MAX_ZERG_NUM];	
-	//CMissile *m_pArrayMissile[MAX_MISSILE_NUM];
+	CMissile *m_pArrayMissile[MAX_MISSILE_NUM];
 
 	CController *m_pController;
 
-	CTransform rootNode;
+	CTransform rootNode;	
+
+	int m_enemyResource;
+	int m_playerResource;
 	
 protected:
 	std::list<CGameNode*> m_listRootGameNodes;
@@ -51,11 +57,12 @@ protected:
 public:	
 	CStarWarScene();
 	void Update(ControllerInput &input);
-	void UpdatePhysics(CGameNode *checking);
-	void CallBackEvent();
+	void EventCallBack(int triggerEvent, void *trigger);
 
 private:
 	void CreateZergFromPool();
+	void CreateMissileFromPool();
+	void WinOrLose();
 };
 
 #endif

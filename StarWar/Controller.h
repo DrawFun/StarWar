@@ -3,15 +3,6 @@
 
 #include "GameNode.h"
 
-struct ControllerInput
-{
-	bool isLButtonDown;
-	float elpasedTime;
-	POINT currentMousePosition;
-	unsigned char keys[256];
-	ControllerInput(){};
-};
-
 class CController
 {
 protected:	
@@ -24,9 +15,12 @@ protected:
 	D3DXVECTOR3	m_up;      // Up Vector
 	D3DXVECTOR3	m_right;   // Right Vector
 
+	float m_missileColdDownCounter;
+
 public:
 	CController(CGameNode *target);
 	void SwitchController(CGameNode *target);
+	CGameNode *GetControllerTarget(){return m_target;};
 	void Control(const ControllerInput &input);
 
 private:

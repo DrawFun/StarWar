@@ -37,7 +37,7 @@ void CMine::Render(LPDIRECT3DDEVICE9 pd3dDevice)
 			//Set multiple textures
 			pd3dDevice->SetTexture(0, pSnowmanTexture0);
 			pd3dDevice->SetTexture(1, pSnowmanTexture1);
-			pSnowmanMesh->DrawSubset(i);
+			m_pMesh->DrawSubset(i);
 		}
 	}
 }
@@ -57,7 +57,7 @@ bool CMine::InitVertices()
     D3DXLoadMeshFromX( "Resource//Snowman.x", D3DXMESH_SYSTEMMEM, 
                        pd3dDevice, NULL, 
                        &pD3DXMtrlBuffer, NULL, &snowManNumMaterials, 
-                       &pSnowmanMesh );
+                       &m_pMesh );
 
     D3DXMATERIAL *d3dxMaterials = (D3DXMATERIAL*)pD3DXMtrlBuffer->GetBufferPointer();
     pSnowmanMeshMaterials = new D3DMATERIAL9[snowManNumMaterials];
@@ -82,17 +82,18 @@ bool CMine::InitVertices()
 	
 bool CMine::InitColliders()
 {
-	D3DXVECTOR3 pMin, pMax;
+	D3DXVECTOR3 pCenter;
+	float pRadius;
 	D3DVERTEXELEMENT9 decl[MAX_FVF_DECL_SIZE];
-	pSnowmanMesh->GetDeclaration( decl );
+	m_pMesh->GetDeclaration(decl);
 	LPVOID pVB;
-	pSnowmanMesh->LockVertexBuffer( D3DLOCK_READONLY, &pVB );
-	UINT uStride = D3DXGetDeclVertexSize( decl, 0 );
-	D3DXComputeBoundingBox(( const D3DXVECTOR3* )pVB, pSnowmanMesh->GetNumVertices(), uStride, &pMin, &pMax);
-	pMin *= 0.05;
-	pMax *= 0.05;
-	Collider col(pMin, pMax);
-	m_colliders.push_back(col);
+	m_pMesh->LockVertexBuffer(D3DLOCK_READONLY, &pVB);
+	UINT uStride = D3DXGetDeclVertexSize(decl, 0);	
+	D3DXComputeBoundingSphere((const D3DXVECTOR3* )pVB, m_pMesh->GetNumVertices(), uStride, &pCenter, &pRadius);
+	//TODO:目前假设球体三个方向scale值相等
+	pRadius *= m_transform.GetScale().x;
+	Collider collider(pCenter, pRadius);
+	m_colliders.push_back(collider);
 	return true;
 }
 
@@ -106,18 +107,15 @@ void CMine::CollidingCallback(CGameNode *collided)
 
 void CMine::CollidedCallback(CGameNode *colliding)
 {
-	//AllocConsole();
-	//_cprintf("%d<-%d\n", this->m_type, colliding->GetType());
 	switch(colliding->GetType())
 	{
-	case MINE:		
-		break;
-	case HUMAN:
-		break;
-	case ZERG_TELEPORT:
 	case ZERG:
-		break;
-	case PLATFORM:
+		m_hp.Damage(ZERG_DAMAGE);
+		if(m_hp.IsDead())
+		{
+			m_rotateSpeed = 0;
+			m_scene->EventCallBack(STARWAR_DESTROY, this);
+		}
 		break;
 	default:
 		break;

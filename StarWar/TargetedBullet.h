@@ -10,13 +10,13 @@ protected:
 	bool m_isAlive;
 
 	void MoveToTarget();
-	void Recycle();
 
 public:
 	CTargetedBullet(CGameNode *target) : m_target(target){};
 	void SetTarget(CGameNode *target) {m_target = target;};
 	bool IsAlive(){ return m_isAlive;};
 	virtual void SetAlive(){ m_isAlive = true;};
+	void Recycle();
 };
 
 #endif

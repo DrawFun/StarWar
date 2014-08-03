@@ -3,6 +3,8 @@
 CZerg::CZerg(float width, float height, float depth, float moveSpeed, CGameNode *target) : 
 		m_width(width), m_height(height), m_depth(depth), CTargetedBullet(target)
 {
+	m_hp = CHitPoint(100);
+
 	m_type = ZERG; 	
 	m_moveSpeed = moveSpeed;
 	m_enableControl = false;
@@ -14,14 +16,14 @@ CZerg::CZerg(float width, float height, float depth, float moveSpeed, CGameNode 
 
 void CZerg::SetAlive()
 {
+	m_transform.SetPosition(m_originalPosition);
+	m_transform.SetPosition(m_originalPosition);
 	m_isAlive = true; 
 	m_enableControl = false;
 	m_enablePhysics = true;
 	m_enableRender = true;
 	m_isControlable = true; 
 	m_isFlyable = true;
-	m_transform.SetPosition(m_originalPosition);
-	m_transform.SetPosition(m_originalPosition);
 }
 
 void CZerg::Render(LPDIRECT3DDEVICE9 pd3dDevice)
@@ -62,15 +64,16 @@ bool CZerg::InitVertices()
 bool CZerg::InitColliders()
 {
 	m_originalPosition = m_transform.GetWorldPosition();
-	D3DXVECTOR3 pMin, pMax;
+	D3DXVECTOR3 pCenter;
+	float pRadius;
 	D3DVERTEXELEMENT9 decl[MAX_FVF_DECL_SIZE];
-	m_pMesh->GetDeclaration( decl );
+	m_pMesh->GetDeclaration(decl);
 	LPVOID pVB;
-	m_pMesh->LockVertexBuffer( D3DLOCK_READONLY, &pVB );
-	UINT uStride = D3DXGetDeclVertexSize( decl, 0 );
-	D3DXComputeBoundingBox(( const D3DXVECTOR3* )pVB, m_pMesh->GetNumVertices(), uStride, &pMin, &pMax);		
-	Collider col(pMin, pMax);
-	m_colliders.push_back(col);
+	m_pMesh->LockVertexBuffer(D3DLOCK_READONLY, &pVB);
+	UINT uStride = D3DXGetDeclVertexSize(decl, 0);	
+	D3DXComputeBoundingSphere((const D3DXVECTOR3* )pVB, m_pMesh->GetNumVertices(), uStride, &pCenter, &pRadius);
+	Collider collider(pCenter, pRadius);
+	m_colliders.push_back(collider);
 	return true;
 }
 
@@ -78,15 +81,20 @@ void CZerg::CollidingCallback(CGameNode *collided)
 {
 	switch(collided->GetType())
 	{
-	case PLATFORM:		
-		break;
 	case HUMAN:
-	case ZERG:
-		break;
-	case ZERG_TELEPORT:
-		break;
-	case MINE:
+	case MINE:		
+		m_scene->EventCallBack(STARWAR_DESTROY, this);
+		m_hp.Reborn();
 		Recycle();
+		break;
+	case MISSILE:
+		m_hp.Damage(MISSILE_DAMAGE);
+		if(m_hp.IsDead())
+		{
+			m_scene->EventCallBack(STARWAR_DESTROY, this);
+			m_hp.Reborn();
+			Recycle();	
+		}
 		break;
 	default:
 		break;
@@ -97,14 +105,19 @@ void CZerg::CollidedCallback(CGameNode *colliding)
 {
 	switch(colliding->GetType())
 	{
-	case PLATFORM:		
+	case MISSILE:	
+		m_hp.Damage(MISSILE_DAMAGE);
+		if(m_hp.IsDead())
+		{
+			m_scene->EventCallBack(STARWAR_DESTROY, this);
+			m_hp.Reborn();
+			Recycle();	
+		}
 		break;
+	case MINE:		
 	case HUMAN:
-	case ZERG:
-		break;
-	case ZERG_TELEPORT:
-		break;
-	case MINE:
+		m_scene->EventCallBack(STARWAR_DESTROY, this);
+		m_hp.Reborn();
 		Recycle();
 		break;
 	default:

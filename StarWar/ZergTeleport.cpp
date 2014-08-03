@@ -1,8 +1,10 @@
 #include "ZergTeleport.h"
-#include "StarWarScene.h"
+
 CZergTeleport::CZergTeleport(float width, float height, float depth, float rotationSpeed) : 
 		m_width(width), m_height(height), m_depth(depth), m_rotationSpeed(rotationSpeed)
 {
+	m_hp = CHitPoint(1000);
+
 	m_type = ZERG_TELEPORT; 	
 	m_enableControl = false;
 	m_enablePhysics = true;
@@ -25,13 +27,18 @@ void CZergTeleport::Render(LPDIRECT3DDEVICE9 pd3dDevice)
 void CZergTeleport::Update()
 {
 	m_transform.Yaw(m_rotationSpeed);
+
+
 	if(m_generationCounter < GENERATION_FRAME_PERIOD)
 	{
 		++m_generationCounter;
 	}
 	else
 	{
-		((CStarWarScene*)m_scene)->CallBackEvent();
+		if(!m_hp.IsDead())
+		{
+			m_scene->EventCallBack(STARWAR_CREATE, this);
+		}
 		m_generationCounter = 0;
 	}
 }
@@ -45,50 +52,49 @@ bool CZergTeleport::InitVertices()
 	m_pMeshMaterials.Diffuse.r = 1;
 	m_pMeshMaterials.Diffuse.g = 0;
 	m_pMeshMaterials.Diffuse.b = 0;
-	m_pMeshMaterials.Diffuse.a = 0.8;
+	m_pMeshMaterials.Diffuse.a = 0.5;
 	m_pMeshMaterials.Ambient.r = 1;
 	m_pMeshMaterials.Ambient.g = 0;
 	m_pMeshMaterials.Ambient.b = 0;
-	m_pMeshMaterials.Ambient.a = 0.8;
+	m_pMeshMaterials.Ambient.a = 0.5;
 	return true;
 }
 
 bool CZergTeleport::InitColliders()
 {
-	D3DXVECTOR3 pMin, pMax;
+	D3DXVECTOR3 pCenter;
+	float pRadius;
 	D3DVERTEXELEMENT9 decl[MAX_FVF_DECL_SIZE];
-	m_pMesh->GetDeclaration( decl );
+	m_pMesh->GetDeclaration(decl);
 	LPVOID pVB;
-	m_pMesh->LockVertexBuffer( D3DLOCK_READONLY, &pVB );
-	UINT uStride = D3DXGetDeclVertexSize( decl, 0 );
-	D3DXComputeBoundingBox(( const D3DXVECTOR3* )pVB, m_pMesh->GetNumVertices(), uStride, &pMin, &pMax);		
-	Collider col(pMin, pMax);
-	m_colliders.push_back(col);
+	m_pMesh->LockVertexBuffer(D3DLOCK_READONLY, &pVB);
+	UINT uStride = D3DXGetDeclVertexSize(decl, 0);	
+	D3DXComputeBoundingSphere((const D3DXVECTOR3* )pVB, m_pMesh->GetNumVertices(), uStride, &pCenter, &pRadius);
+	Collider collider(pCenter, pRadius);
+	m_colliders.push_back(collider);
 	return true;
 }
 
 void CZergTeleport::CollidingCallback(CGameNode *collided)
 {
-	AllocConsole();
-	_cprintf("ZERGTELEPORT colliding\n");
+	//目前无相应行为
 }
 
 void CZergTeleport::CollidedCallback(CGameNode *colliding)
 {
-	AllocConsole();
-	_cprintf("ZERGTELEPORT collided\n");
 	switch(colliding->GetType())
 	{
-	case PLATFORM:		
+	case MISSILE:	
+		m_hp.Damage(MISSILE_DAMAGE);
+		if(m_hp.IsDead())
+		{
+			m_rotationSpeed = 0;
+			m_scene->EventCallBack(STARWAR_DESTROY, this);
+		}
 		break;
 	case HUMAN:
-	case ZERG:
-		break;
-	case ZERG_TELEPORT:
-		break;
-	case MINE:
 		break;
 	default:
-		break;
+		return;
 	}
 }

@@ -2,10 +2,12 @@
 #define _STARWAR_ZERG_H_
 
 #include "TargetedBullet.h"
+#include "HitPoint.h"
 
 class CZerg : public CTargetedBullet
 {
 protected:
+	CHitPoint m_hp;
 	float m_width;
 	float m_height;
 	float m_depth;	

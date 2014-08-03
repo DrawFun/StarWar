@@ -14,9 +14,14 @@
 #include <math.h>
 #include <conio.h>
 #include <vector>
+#include <list>
 
 const float CAMERA_PITCH_LIMITATION = 0.5f;
-enum GameNodeType{SKYBOX, TERRAIN, HUMAN, MINE, ZERG, ZERG_TELEPORT, AIRPLANE, PLATFORM, MISSILE};
+enum GameNodeType{SKYBOX, TERRAIN, HUMAN, MINE, ZERG, ZERG_TELEPORT, AIRPLANE, PLATFORM, MISSILE, LENGTH};
+
+enum StarWarSceneEvent{STARWAR_CREATE, STARWAR_DESTROY, STARWAR_IN_AIRPLANE, STARWAR_OUT_AIRPLANE};
+const int MISSILE_DAMAGE = 200;
+const int ZERG_DAMAGE = 20;
 
 //Vertex containing position, normal and texture.
 struct PositionNormalTexVertex
@@ -79,9 +84,24 @@ struct PositionNormalSpecularColorTexVertex
 		_nx(nx), _ny(ny), _nz(nz), _color(color), _tx(tx), _ty(ty){}
 };
 
+struct ControllerInput
+{
+	bool isLButtonDown;
+	float elpasedTime;
+	POINT currentMousePosition;
+	unsigned char keys[256];
+	ControllerInput(){};
+};
+
 class Util
 {
 public:
+	static inline void Clip(int low, int high, int &number)
+	{
+		number = (number > low) ? number : low;
+		number = (number < high) ? number : high;	
+	}
+
 	static inline void Clip(float low, float high, float &number)
 	{
 		number = (number > low) ? number : low;

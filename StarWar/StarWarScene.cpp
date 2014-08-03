@@ -32,7 +32,7 @@ CStarWarScene::CStarWarScene()
 
 	for(int i = 0; i < PLATFORM_NUM; ++i)
 	{
-		m_pArrayPlatform[i] = new CPlatform(20.0f, 2.0f, 20.0f, 0.02f, 0.00f);
+		m_pArrayPlatform[i] = new CPlatform(20.0f, 0.5f, 20.0f, 0.02f, 0.00f);
 		m_pArrayPlatform[i]->InitTransform(platformTramsforms[i]);
 		rootNode.AddChild(m_pArrayPlatform[i]->GetTransform());
 		m_listRootGameNodes.push_back(m_pArrayPlatform[i]);
@@ -84,13 +84,23 @@ CStarWarScene::CStarWarScene()
 
 	for(int i = 0; i < MAX_ZERG_NUM; ++i)
 	{
-		m_pArrayZerg[i] = new CZerg(3, 3, 3, 0.5, m_pArrayMine[i % MINE_NUM]);
+		m_pArrayZerg[i] = new CZerg(3, 3, 3, 0.05, m_pArrayMine[i % MINE_NUM]);
 		m_pArrayZerg[i]->InitTransform(zergTramsforms[i]);
 		rootNode.AddChild(m_pArrayZerg[i]->GetTransform());
 		m_listRootGameNodes.push_back(m_pArrayZerg[i]);
 		m_listCollisionGameNodes.push_back(m_pArrayZerg[i]);
+		m_pArrayZerg[i]->Recycle();		
 	}
 
+	for(int i = 0; i < MAX_MISSILE_NUM; ++i)
+	{
+		m_pArrayMissile[i] = new CMissile(0.5, 0.05, 1, 5, m_pZergTeleport);
+		m_pArrayMissile[i]->InitTransform(CTransform());
+		rootNode.AddChild(m_pArrayMissile[i]->GetTransform());
+		m_listRootGameNodes.push_back(m_pArrayMissile[i]);
+		m_listCollisionGameNodes.push_back(m_pArrayMissile[i]);	
+		m_pArrayMissile[i]->Recycle();
+	}
 
 	for(auto gameNode : m_listRootGameNodes)
 	{
@@ -99,11 +109,55 @@ CStarWarScene::CStarWarScene()
 		gameNode->InitColliders();
 	}
 	
-	m_pMainCamera = new CCamera(m_pPlayer, D3DXVECTOR3(0, 0, -15));
+	m_enemyResource = 1;
+	m_playerResource = MINE_NUM + 1;
+	
+
+	m_pMainCamera = new CCamera(m_pPlayer, D3DXVECTOR3(0, 5, -15));
 	m_pSkyBox->SetCamera(m_pMainCamera);
 
 	m_pController = new CController(m_pPlayer);
 
+	m_pPhysics = new CPhysics(m_listRootGameNodes);
+}
+
+void CStarWarScene::CreateZergFromPool()
+{
+	for(int i = 0; i < MAX_ZERG_NUM; ++i)
+	{
+		if(!m_pArrayZerg[i]->IsAlive())
+		{
+			m_pArrayZerg[i]->SetAlive();
+			++m_enemyResource;
+			return;
+		}
+	}
+}
+
+void CStarWarScene::CreateMissileFromPool()
+{
+	for(int i = 0; i < MAX_MISSILE_NUM; ++i)
+	{
+		if(!m_pArrayMissile[i]->IsAlive())
+		{			
+			m_pArrayMissile[i]->GetTransform()->SetPosition
+				(m_pController->GetControllerTarget()->GetTransform()->GetPosition());
+			m_pArrayMissile[i]->GetTransform()->SetRotation
+				(m_pController->GetControllerTarget()->GetTransform()->GetRotation());
+			m_pArrayMissile[i]->SetAlive();
+
+			for(int j = 0; j < MAX_ZERG_NUM; ++j)
+			{
+				if(m_pArrayZerg[j]->IsAlive())
+				{
+					m_pArrayMissile[i]->SetTarget(m_pArrayZerg[j]);
+					return;
+				}
+			}
+			m_pArrayMissile[i]->SetTarget(m_pZergTeleport);
+			return;
+		}
+	}
 }
 
 void CStarWarScene::Update(ControllerInput &input)
@@ -112,10 +166,7 @@ void CStarWarScene::Update(ControllerInput &input)
 	
 	rootNode.UpdateMatrix();
 
-	for(auto collider : m_listCollisionGameNodes)
-	{
-		UpdatePhysics(collider);
-	}
+	m_pPhysics->CollisionCheck();
 
 	for(auto gameNode : m_listRootGameNodes)
 	{
@@ -128,32 +179,70 @@ void CStarWarScene::Update(ControllerInput &input)
 	}
 
 	m_pMainCamera->LateUpdate();
+
+	WinOrLose();
 }
 
-void CStarWarScene::UpdatePhysics(CGameNode *checking)
+void CStarWarScene::EventCallBack(int triggerEvent, void *trigger)
 {
-	for(auto checked : m_listCollisionGameNodes)
+	switch(triggerEvent)
 	{
-		if(checking != checked && Collider::IsCollision(checking->GetCollider(), checked->GetCollider(), checking->GetTransform()->GetWorldPosition(), checked->GetTransform()->GetWorldPosition()))
+	case STARWAR_CREATE:
+		switch (((CGameNode *)trigger)->GetType())
 		{
-			checking->CollidingCallback(checked);
-			checked->CollidedCallback(checking);
+		case ZERG_TELEPORT:
+			CreateZergFromPool();
+			break;
+		case AIRPLANE:
+			CreateMissileFromPool();
+			break;
+		default:
+			break;
 		}
+		break;
+	case STARWAR_DESTROY:
+		switch (((CGameNode *)trigger)->GetType())
+		{
+		case ZERG_TELEPORT:
+		case ZERG:
+			--m_enemyResource;
+			break;
+		case HUMAN:
+		case MINE:
+			--m_playerResource;
+			break;
+		default:
+			break;
+		}
+		break;
+	case STARWAR_IN_AIRPLANE:
+		rootNode.AddChild(((CGameNode *)trigger)->GetTransform());
+		m_pController->SwitchController((CGameNode *)trigger);
+		m_pMainCamera->SwitchTarget((CGameNode *)trigger);
+		break;
+	case STARWAR_OUT_AIRPLANE:
+		m_pPlayer->GetTransform()->SetWorldPosition(((CGameNode *)trigger)->GetTransform()->GetWorldPosition() + D3DXVECTOR3(10, 0, 10));
+		m_pPlayer->GetTransform()->SetRotation(((CGameNode *)trigger)->GetTransform()->GetRotation());
+		rootNode.AddChild(((CGameNode *)trigger)->GetTransform());		
+		rootNode.AddChild(m_pPlayer->GetTransform());
+		m_pPlayer->SwitchRender(true);
+		m_pPlayer->SwitchPhysics(true);
+		m_pController->SwitchController(m_pPlayer);
+		m_pMainCamera->SwitchTarget(m_pPlayer);
+		break;
+	default:
+		break;
 	}
 }
 
-void CStarWarScene::CallBackEvent()
+void CStarWarScene::WinOrLose()
 {
-	CreateZergFromPool();
-}
-
-void CStarWarScene::CreateZergFromPool()
-{
-	for(int i = 0; i < MAX_ZERG_NUM; ++i)
+	if(m_pPlayer->GetHitPoint()->IsDead())
 	{
-		if(!m_pArrayZerg[i]->IsAlive())
-		{
-			m_pArrayZerg[i]->SetAlive();
-		}
+		;
+	}
+	if(m_enemyResource == 0)
+	{
+		;
 	}
 }
