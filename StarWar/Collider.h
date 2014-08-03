@@ -3,6 +3,7 @@
 
 #include "Util.h"
 
+//基础的两类碰撞体
 enum ColliderType{BOX_COLLIDER = 0, SPHERE_COLLIDER = 1};
 
 class Collider
@@ -15,13 +16,17 @@ protected:
 	float m_radius;
 
 public:
+	//盒状碰撞体
 	Collider(D3DXVECTOR3 &pMin, D3DXVECTOR3 &pMax) : m_type(BOX_COLLIDER), m_pMin(pMin), m_pMax(pMax)
 	{
 		m_radius = D3DXVec3Length(&(m_pMax - m_pMin)) / 2;
 	};
 
+	//球状碰撞体
 	Collider(D3DXVECTOR3 &pCenter, float radius) : m_type(SPHERE_COLLIDER), m_pCenter(pCenter), m_radius(radius){};
 
+	//每个物体可能由多个基础碰撞体组合而成，因此这里用的容器（但项目里都是最逗比的单体，设计理想很丰满，现实很骨感）
+	//碰撞体和位置信息，循环遍历进行检测
 	static bool IsCollision(std::vector<Collider> colliders1, std::vector<Collider> colliders2, 
 		D3DXVECTOR3 position1, D3DXVECTOR3 position2)
 	{		
@@ -39,6 +44,9 @@ public:
 	}
 
 private:
+	//盒装碰撞体将两个立方体映射到三个平面上进行检测
+	//球状检测半径和球心
+	//盒装和球状又偷懒了。。。
 	static bool IsCollision(Collider *collider1, Collider *collider2, 
 		D3DXVECTOR3 position1, D3DXVECTOR3 position2)
 	{
@@ -77,6 +85,7 @@ private:
 		return false;
 	}
 
+	//矩形是否相交
 	static inline bool IsRectInsection(RECT r1, RECT r2)
 	{				
 		if(abs((r1.left+r1.right)/2-(r2.left+r2.right)/2)<((r1.right+r2.right-r1.left-r2.left)/2) && abs((r1.bottom+r1.top)/2-(r2.bottom+r2.top)/2)<((r1.top+r2.top-r1.bottom-r2.bottom)/2))

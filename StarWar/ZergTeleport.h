@@ -14,14 +14,15 @@ protected:
 	float m_depth;	
 	float m_rotationSpeed;
 	LPD3DXMESH m_pMesh; 
-	D3DMATERIAL9 m_pMeshMaterials; 
+	D3DMATERIAL9 m_meshMaterials; 
 	unsigned long m_materialsNum; //Number of material
 	int m_generationCounter;
 	static const int GENERATION_FRAME_PERIOD = 200;
 
 public:
 	CZergTeleport(float width, float height, float depth, float rotationSpeed);
-	
+	~CZergTeleport();
+
 	void Update();
 	bool InitVertices();
 	bool InitColliders();

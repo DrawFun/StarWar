@@ -54,6 +54,7 @@ protected:
 	std::list<CGameNode*> m_listCollisionGameNodes;
 public:	
 	CStarWarScene();
+	~CStarWarScene();
 	void Update(ControllerInput &input);
 	void EventCallBack(int triggerEvent, void *trigger);
 

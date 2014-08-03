@@ -12,6 +12,14 @@ CAirplane::CAirplane()
 	m_isFlying = false;
 }
 
+CAirplane::~CAirplane()
+{
+	delete m_pMesh;
+	if( m_pMeshMaterials != NULL )
+        delete[] m_pMeshMaterials;
+
+}
+
 void CAirplane::Render(LPDIRECT3DDEVICE9 pd3dDevice)
 {
 	if(m_enableRender)
@@ -100,8 +108,6 @@ void CAirplane::CollidingCallback(CGameNode *collided)
 
 void CAirplane::CollidedCallback(CGameNode *colliding)
 {
-	//AllocConsole();
-	//_cprintf("%d<-%d\n", this->m_type, colliding->GetType());
 	switch(colliding->GetType())
 	{
 	case PLATFORM:	

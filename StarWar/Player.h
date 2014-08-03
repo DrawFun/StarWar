@@ -9,12 +9,13 @@ class CPlayer : public CGameNode
 protected:
 	CHitPoint m_hp;
 	LPD3DXMESH m_pMesh; 
-	D3DMATERIAL9 m_pMeshMaterials; 
+	D3DMATERIAL9 m_meshMaterials; 
 	unsigned long m_materialsNum; //Number of material
 	bool m_onPlatform;
 
 public:
 	CPlayer();
+	~CPlayer();
 	void Update();
 	void Render(LPDIRECT3DDEVICE9 pd3dDevice);
 	bool InitVertices();

@@ -15,6 +15,7 @@ protected:
 
 public:
 	CAirplane();
+	~CAirplane();
 	void Update();
 	bool InitVertices();
 	bool InitColliders();

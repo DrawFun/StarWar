@@ -14,6 +14,13 @@ CZerg::CZerg(float width, float height, float depth, float moveSpeed, CGameNode 
 	m_isFlyable = true;
 }
 
+CZerg::~CZerg()
+{
+	if( m_pMesh != NULL )
+        m_pMesh->Release(); 
+}
+
+
 void CZerg::SetAlive()
 {
 	m_transform.SetPosition(m_originalPosition);
@@ -31,7 +38,7 @@ void CZerg::Render(LPDIRECT3DDEVICE9 pd3dDevice)
 	if(m_enableRender)
 	{
 		pd3dDevice->SetTransform(D3DTS_WORLD, &m_transform.GetWorldMatrix());	
-		pd3dDevice->SetMaterial(&m_pMeshMaterials);
+		pd3dDevice->SetMaterial(&m_meshMaterials);
 		m_pMesh->DrawSubset(0);
 	}
 }
@@ -49,15 +56,15 @@ bool CZerg::InitVertices()
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
 
 	D3DXCreateBox(pd3dDevice, m_width, m_height, m_depth, &m_pMesh, NULL);
-	ZeroMemory(&m_pMeshMaterials, sizeof(D3DMATERIAL9));
-	m_pMeshMaterials.Diffuse.r = 1;
-	m_pMeshMaterials.Diffuse.g = 0;
-	m_pMeshMaterials.Diffuse.b = 0;
-	m_pMeshMaterials.Diffuse.a = 0.8;
-	m_pMeshMaterials.Ambient.r = 1;
-	m_pMeshMaterials.Ambient.g = 0;
-	m_pMeshMaterials.Ambient.b = 0;
-	m_pMeshMaterials.Ambient.a = 0.8;
+	ZeroMemory(&m_meshMaterials, sizeof(D3DMATERIAL9));
+	m_meshMaterials.Diffuse.r = 1;
+	m_meshMaterials.Diffuse.g = 0;
+	m_meshMaterials.Diffuse.b = 0;
+	m_meshMaterials.Diffuse.a = 0.8;
+	m_meshMaterials.Ambient.r = 1;
+	m_meshMaterials.Ambient.g = 0;
+	m_meshMaterials.Ambient.b = 0;
+	m_meshMaterials.Ambient.a = 0.8;
 	return true;
 }
 

@@ -11,6 +11,16 @@ CMine::CMine(float rotateSpeed = 0) : m_rotateSpeed(rotateSpeed)
 	m_isFlyable = false;	
 }
 
+CMine::~CMine()
+{
+	if( pSnowmanMeshMaterials != NULL )
+        delete[] pSnowmanMeshMaterials;
+
+	if( m_pMesh != NULL )
+        m_pMesh->Release(); 
+
+}
+
 void CMine::Render(LPDIRECT3DDEVICE9 pd3dDevice)
 {
 	if(m_enableRender)
@@ -101,8 +111,6 @@ bool CMine::InitColliders()
 
 void CMine::CollidingCallback(CGameNode *collided)
 {
-	//AllocConsole();
-	//_cprintf("%d->%d\n", this->m_type, collided->GetType());
 }
 	
 

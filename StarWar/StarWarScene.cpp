@@ -2,12 +2,15 @@
 
 CStarWarScene::CStarWarScene()
 {
+	//半透明渲染
 	CDXEngine::Instance()->GetDxDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, true); 
 	CDXEngine::Instance()->GetDxDevice()->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE); 
 	CDXEngine::Instance()->GetDxDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA); 
 	CDXEngine::Instance()->GetDxDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);	
 	CDXEngine::Instance()->GetDxDevice()->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS,TRUE);
 
+	//场景物品初始化
+	//场景搭建
 	m_pSkyBox = new CSkyBox();
 	m_pTerrain = new CTerrain(300, 300, -150, -150, 2, -2, 16);
 	
@@ -109,18 +112,36 @@ CStarWarScene::CStarWarScene()
 		gameNode->InitColliders();
 	}
 	
+	//游戏状态初始化
 	m_enemyResource = 1;
 	m_playerResource = MINE_NUM + 1;
 	
 
+	//相机初始化
 	m_pMainCamera = new CCamera(m_pPlayer, D3DXVECTOR3(0, 5, -15));
+	//天空盒绑定到相机
 	m_pSkyBox->SetCamera(m_pMainCamera);
 
+	//控制器角色绑定
 	m_pController = new CController(m_pPlayer);
 
+	//物理层初始化（加入关心对象的链表，这里为所有）
 	m_pPhysics = new CPhysics(m_listRootGameNodes);
 }
 
+//析构
+CStarWarScene::~CStarWarScene()
+{
+	delete m_pController;
+	delete m_pMainCamera;
+
+	for(auto node : m_listRootGameNodes)
+	{
+		delete node;
+	}
+}
+
+//从对象池中创建对象（Zerg）
 void CStarWarScene::CreateZergFromPool()
 {
 	for(int i = 0; i < MAX_ZERG_NUM; ++i)
@@ -134,6 +155,7 @@ void CStarWarScene::CreateZergFromPool()
 	}
 }
 
+//从对象池中创建对象（导弹）
 void CStarWarScene::CreateMissileFromPool()
 {
 	for(int i = 0; i < MAX_MISSILE_NUM; ++i)
@@ -141,7 +163,7 @@ void CStarWarScene::CreateMissileFromPool()
 		if(!m_pArrayMissile[i]->IsAlive())
 		{	
 			m_pArrayMissile[i]->GetTransform()->SetPosition
-				(m_pController->GetControllerTarget()->GetTransform()->GetPosition());
+				(m_pController->GetControllerTarget()->GetTransform()->GetWorldPosition());
 			m_pArrayMissile[i]->GetTransform()->SetWorldPosition
 				(m_pController->GetControllerTarget()->GetTransform()->GetWorldPosition());
 			m_pArrayMissile[i]->GetTransform()->SetRotation
@@ -162,29 +184,42 @@ void CStarWarScene::CreateMissileFromPool()
 	}
 }
 
+//更新当前场景
 void CStarWarScene::Update(ControllerInput &input)
 {
+	//更新控制层
 	m_pController->Control(input);
 	
+	//更新各个物体的Transform
+	//用树的形式进行组织，由父到子依次递归更新
 	rootNode.UpdateMatrix();
 
+	//更新各个物体的物理层
+	//物理层通过碰撞层次矩阵与分类链表存放进行组织优化
 	m_pPhysics->CollisionCheck();
 
+	//根据Input和物理层的结果，对物体行为更新
 	for(auto gameNode : m_listRootGameNodes)
 	{
 		gameNode->Update();
 	}
 
+	//对链表中的所有节点进行绘制
+	//分离绘制，可以进行后续的相同节点打包绘制的优化措施（没做。。。）
 	for(auto gameNode : m_listRootGameNodes)
 	{
 		gameNode->Render(CDXEngine::Instance()->GetDxDevice());
 	}
 
+	//更新View Matrix
 	m_pMainCamera->LateUpdate();
 
+	//判断游戏状态
 	WinOrLose();
 }
 
+//场景回调函数
+//让场景中对象的某些事件进行响应，如对象的创建，销毁，控制对象的转变
 void CStarWarScene::EventCallBack(int triggerEvent, void *trigger)
 {
 	CGameNode *pGameNode;
@@ -222,18 +257,25 @@ void CStarWarScene::EventCallBack(int triggerEvent, void *trigger)
 		}
 		break;
 	case STARWAR_IN_AIRPLANE:
+		//将飞机的父节点设置为世界根节点
+		//将飞机设置为控制对象
+		//将飞机设置为相机跟随对象
 		rootNode.AddChild(((CGameNode *)trigger)->GetTransform());
 		m_pController->SwitchController((CGameNode *)trigger);
 		m_pMainCamera->SwitchTarget((CGameNode *)trigger);
 		break;
 	case STARWAR_OUT_AIRPLANE:
+		//根据飞机的Transform重设Player的Transform，消除z轴偏移（因为Player没有Roll操作，飞机有）
 		pGameNode = (CGameNode *)trigger;
+		//下飞机有一定的偏移量，防止发生碰撞再次上飞机。。。
 		m_pPlayer->GetTransform()->SetWorldPosition(pGameNode->GetTransform()->GetWorldPosition() + D3DXVECTOR3(10, 0, 10));
 		adjustRotation = pGameNode->GetTransform()->GetRotation();
 		adjustRotation.z = 0;
 		m_pPlayer->GetTransform()->SetRotation(adjustRotation);
 		pGameNode->GetTransform()->SetRotation(D3DXVECTOR3(0,0,0));
 
+		//父节点设置为世界根节点
+		//重设控制对象，跟随对象
 		rootNode.AddChild(m_pPlayer->GetTransform());
 		m_pPlayer->SwitchRender(true);
 		m_pPlayer->SwitchPhysics(true);
@@ -245,6 +287,7 @@ void CStarWarScene::EventCallBack(int triggerEvent, void *trigger)
 	}
 }
 
+//游戏状态判断
 void CStarWarScene::WinOrLose()
 {
 	RECT rect = {20, 20, 300, 200};	

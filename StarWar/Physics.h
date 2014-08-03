@@ -7,7 +7,9 @@
 class CPhysics
 {
 private:
+	//Åö×²²ã´Î¾ØÕó
 	std::vector<std::vector<bool>> m_layerMatrix;
+	//Åö×²Á´±í
 	std::list<CGameNode*> m_collisionGameNodes[GameNodeType::LENGTH];
 
 public:

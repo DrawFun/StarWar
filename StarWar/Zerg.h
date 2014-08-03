@@ -12,12 +12,13 @@ protected:
 	float m_height;
 	float m_depth;	
 	LPD3DXMESH m_pMesh; 
-	D3DMATERIAL9 m_pMeshMaterials; 
+	D3DMATERIAL9 m_meshMaterials; 
 	unsigned long m_materialsNum; //Number of material
 	D3DXVECTOR3 m_originalPosition;
 
 public:
 	CZerg(float width, float height, float depth, float moveSpeed, CGameNode *target);
+	~CZerg();
 	void SetAlive();
 
 	void Update();

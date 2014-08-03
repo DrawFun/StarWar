@@ -1,13 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="源文件">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{4fa32d8b-244c-4b40-a08a-b7f9d8e46a28}</UniqueIdentifier>
     </Filter>
-    <Filter Include="头文件">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{742027ec-1c92-40d1-801a-bb597ba9e011}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util">
+      <UniqueIdentifier>{a6c1f4a6-857c-4440-a810-004c15bb779b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Physics">
+      <UniqueIdentifier>{a42ba894-9b39-4d9b-9402-e0b07e9d805e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Render">
+      <UniqueIdentifier>{26e89a28-712e-4658-bbf1-8ce59601c22f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Transform">
+      <UniqueIdentifier>{ebaa1426-54f1-4389-bec2-6bb9a448d194}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Input">
+      <UniqueIdentifier>{8f990f5e-5c72-4285-8eda-fc3b657d87d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Scene">
+      <UniqueIdentifier>{f22d4c96-ec38-4906-b7c8-db7bc2a834d2}</UniqueIdentifier>
     </Filter>
     <Filter Include="资源文件">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
@@ -15,139 +31,134 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="SkyBox.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Terrain.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="Airplane.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DXEngine.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Mine.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="GameNode.cpp">
-      <Filter>源文件</Filter>
+      <Filter>Engine\Transform</Filter>
     </ClCompile>
     <ClCompile Include="Controller.cpp">
-      <Filter>源文件</Filter>
+      <Filter>Engine\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Platform.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Transform.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Airplane.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Zerg.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ZergTeleport.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Missile.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="StarWarScene.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="DXEngine.cpp">
+      <Filter>Engine\Scene</Filter>
     </ClCompile>
     <ClCompile Include="FPS.cpp">
-      <Filter>源文件</Filter>
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Mine.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Missile.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="Physics.cpp">
-      <Filter>源文件</Filter>
+      <Filter>Engine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="GameNode.cpp">
+      <Filter>Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyBox.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Engine\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="Zerg.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="TargetedBullet.cpp">
-      <Filter>源文件</Filter>
+      <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="StarWarScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="ZergTeleport.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SkyBox.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Util.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Terrain.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneManager.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DXEngine.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Mine.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="GameNode.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="Airplane.h">
+      <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="Controller.h">
-      <Filter>头文件</Filter>
+      <Filter>Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Engine\Transform</Filter>
     </ClInclude>
     <ClInclude Include="Collider.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Platform.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="StarWarScene.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Airplane.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Zerg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ZergTeleport.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Missile.h">
-      <Filter>头文件</Filter>
+      <Filter>Engine\Physics</Filter>
     </ClInclude>
     <ClInclude Include="FPS.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TargetedBullet.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsNode.h">
-      <Filter>头文件</Filter>
+      <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="HitPoint.h">
-      <Filter>头文件</Filter>
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Mine.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Missile.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics.h">
+      <Filter>Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="GameNode.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyBox.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="StarWarScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TargetedBullet.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Engine\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="Util.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="ZergTeleport.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Zerg.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

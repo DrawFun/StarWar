@@ -15,9 +15,10 @@ protected:
 	static const int PLATFORM_MOVE_FRAME_PERIOD = 1000;
 
 	LPD3DXMESH m_pMesh; //Point to mesh
-	D3DMATERIAL9 m_pMeshMaterials; //Point to mesh material
+	D3DMATERIAL9 m_meshMaterials; //Point to mesh material
 public:
 	CPlatform(float width, float height, float depth, float horizonlSpeed, float rotationSpeed);
+	~CPlatform();
 	void Update();
 	void Render(LPDIRECT3DDEVICE9 pd3dDevice);
 	bool InitVertices();

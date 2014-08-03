@@ -70,6 +70,7 @@ CDXEngine::CDXEngine(HWND hWnd)
 
 }
 
+//µ¥Àý³õÊ¼»¯
 CDXEngine* CDXEngine::Instance(HWND hWnd)
 {
     if(NULL == pInstance)

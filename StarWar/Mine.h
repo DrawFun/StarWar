@@ -17,6 +17,7 @@ protected:
 
 public:
 	CMine(float rotateSpeed);
+	~CMine();
 	void Update();
 	void Render(LPDIRECT3DDEVICE9 pd3dDevice);
 	bool InitVertices();

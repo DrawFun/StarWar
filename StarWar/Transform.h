@@ -6,6 +6,7 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 
+//坐标相关变换
 class CTransform
 {
 private:
@@ -57,6 +58,7 @@ public:
 	void ResetTransform(CTransform *parents = NULL);
 
 public:
+	//将四元数转换成欧拉角	
 	static D3DXVECTOR3 QuaternionToEuler(D3DXQUATERNION &q)
 	{
 		D3DXVECTOR3 ret;

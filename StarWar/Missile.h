@@ -10,7 +10,7 @@ protected:
 	float m_radius2;
 	float m_length;	
 	LPD3DXMESH m_pMesh; 
-	D3DMATERIAL9 m_pMeshMaterials; 
+	D3DMATERIAL9 m_meshMaterials; 
 	unsigned long m_materialsNum; //Number of material
 
 	int m_destroyCounter;
@@ -18,6 +18,7 @@ protected:
 	
 public:
 	CMissile(float radius1, float radius2, float length, float moveSpeed, CGameNode *target);
+	~CMissile();
 	void SetAlive();
 
 	void Update();

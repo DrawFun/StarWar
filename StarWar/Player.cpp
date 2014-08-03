@@ -13,6 +13,11 @@ CPlayer::CPlayer()
 	m_onPlatform = false;
 }
 
+CPlayer::~CPlayer()
+{
+	delete m_pMesh;
+}
+
 void CPlayer::Update()
 {
 	//没有碰撞分离的Trigger
@@ -30,7 +35,7 @@ void CPlayer::Render(LPDIRECT3DDEVICE9 pd3dDevice)
 	if(m_enableRender)
 	{
 		pd3dDevice->SetTransform(D3DTS_WORLD, &m_transform.GetWorldMatrix());	
-		pd3dDevice->SetMaterial(&m_pMeshMaterials);
+		pd3dDevice->SetMaterial(&m_meshMaterials);
 		m_pMesh->DrawSubset(0);
 	}
 }
@@ -39,15 +44,15 @@ bool CPlayer::InitVertices()
 {
 	LPDIRECT3DDEVICE9 pd3dDevice = CDXEngine::Instance()->GetDxDevice();
 	D3DXCreateSphere(pd3dDevice, 2.5f, 20, 20, &m_pMesh, NULL);
-	ZeroMemory(&m_pMeshMaterials, sizeof(D3DMATERIAL9));
-	m_pMeshMaterials.Diffuse.r = 0;
-	m_pMeshMaterials.Diffuse.g = 0;
-	m_pMeshMaterials.Diffuse.b = 1;
-	m_pMeshMaterials.Diffuse.a = 0.2;
-	m_pMeshMaterials.Ambient.r = 0;
-	m_pMeshMaterials.Ambient.g = 0;
-	m_pMeshMaterials.Ambient.b = 1;
-	m_pMeshMaterials.Ambient.a = 0.2;
+	ZeroMemory(&m_meshMaterials, sizeof(D3DMATERIAL9));
+	m_meshMaterials.Diffuse.r = 0;
+	m_meshMaterials.Diffuse.g = 0;
+	m_meshMaterials.Diffuse.b = 1;
+	m_meshMaterials.Diffuse.a = 0.2;
+	m_meshMaterials.Ambient.r = 0;
+	m_meshMaterials.Ambient.g = 0;
+	m_meshMaterials.Ambient.b = 1;
+	m_meshMaterials.Ambient.a = 0.2;
 	return true;
 }
 
